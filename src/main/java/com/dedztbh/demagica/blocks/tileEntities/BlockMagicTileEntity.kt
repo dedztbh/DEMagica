@@ -44,7 +44,11 @@ class BlockMagicTileEntity : TileEntity(), IFluidHandler, IEnergyProvider, ITick
         return super.getCapability(capability, facing)
     }
 
-    val steamTank = FluidTank(TANK_MB_CAPACITY)
+    val steamTank = object : FluidTank(TANK_MB_CAPACITY) {
+        override fun canFillFluidType(fluid: FluidStack): Boolean {
+            return fluid.fluid.name == "steam"
+        }
+    }
     val battery = EnergyStorage(BATTERY_RF_CAPACITY)
 
     //IEnergyProvider
@@ -75,7 +79,7 @@ class BlockMagicTileEntity : TileEntity(), IFluidHandler, IEnergyProvider, ITick
     }
 
     override fun fill(resource: FluidStack, doFill: Boolean): Int {
-        return if (resource.fluid !== null) {
+        return if (resource.fluid !== null && resource.fluid.name == "steam") {
             steamTank.fill(resource, doFill)
         } else 0
     }
@@ -122,14 +126,17 @@ class BlockMagicTileEntity : TileEntity(), IFluidHandler, IEnergyProvider, ITick
                     for ((targetBlockPos, facing) in it) {
                         world.getTileEntity(targetBlockPos).let { targetTE ->
                             if (targetTE is IEnergyReceiver && targetTE.canConnectEnergy(facing)) {
-                                val sentRF = targetTE.receiveEnergy(
+                                targetTE.receiveEnergy(
                                         facing,
-                                        battery.extractEnergy(battery.maxExtract, false),
-                                        false)
-                                battery.extractEnergy(sentRF, false)
-                                if (sentRF > 0) {
-                                    dirtyFlag = true
-                                }
+                                        battery.extractEnergy(battery.maxExtract, true),
+                                        true)
+                                        .let { maxRFCanSent ->
+                                            if (maxRFCanSent > 0) {
+                                                battery.extractEnergy(maxRFCanSent, false)
+                                                targetTE.receiveEnergy(facing, maxRFCanSent, false)
+                                                dirtyFlag = true
+                                            }
+                                        }
                             }
                         }
                     }
