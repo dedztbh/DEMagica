@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "demagica:blocks/magic2",
+    "down": "demagica:blocks/magic2",
+    "up": "demagica:blocks/magic2",
+    "east": "demagica:blocks/magic2",
+    "west": "demagica:blocks/magic2",
+    "north": "demagica:blocks/magic",
+    "south": "demagica:blocks/magic2"
+  }
+}
