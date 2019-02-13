@@ -24,76 +24,86 @@ const val CONVERT_TICKS = 1
 
 typealias P<T, R> = Pair<T, R>
 
-class BlockMagicTileEntity : TileEntity(), IFluidHandler, IEnergyProvider, ITickable {
+class BlockMagicTileEntity :
+        TileEntity(),
+        IFluidHandler,
+        IEnergyProvider,
+        cofh.redstoneflux.api.IEnergyStorage,
+        net.minecraftforge.energy.IEnergyStorage,
+        ITickable {
+    override fun hasCapability(capability: Capability<*>, facing: EnumFacing?): Boolean =
+            when (capability) {
+                CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY -> {
+                    true
+                }
+                CapabilityEnergy.ENERGY -> {
+                    true
+                }
+                else -> {
+                    super.hasCapability(capability, facing)
+                }
+            }
 
-    override fun hasCapability(capability: Capability<*>, facing: EnumFacing?): Boolean {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return true
-        } else if (capability == CapabilityEnergy.ENERGY) {
-            return true
-        }
-        return super.hasCapability(capability, facing)
-    }
+    override fun <T : Any> getCapability(capability: Capability<T>, facing: EnumFacing?): T? =
+            when (capability) {
+                CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY -> {
+                    this as T
+                }
+                CapabilityEnergy.ENERGY -> {
+                    this as T
+                }
+                else -> {
+                    super.getCapability(capability, facing)
+                }
+            }
 
-    override fun <T : Any> getCapability(capability: Capability<T>, facing: EnumFacing?): T? {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return steamTank as T
-        } else if (capability == CapabilityEnergy.ENERGY) {
-            return battery as T
-        }
-        return super.getCapability(capability, facing)
+    private val steamTank = object : FluidTank(TANK_MB_CAPACITY) {
+        override fun canFillFluidType(fluid: FluidStack): Boolean = fluid.fluid.name == "steam"
     }
+    private val battery = object : EnergyStorage(BATTERY_RF_CAPACITY) {
 
-    val steamTank = object : FluidTank(TANK_MB_CAPACITY) {
-        override fun canFillFluidType(fluid: FluidStack): Boolean {
-            return fluid.fluid.name == "steam"
-        }
     }
-    val battery = EnergyStorage(BATTERY_RF_CAPACITY)
 
     //IEnergyProvider
 
-    override fun getMaxEnergyStored(from: EnumFacing?): Int {
-        return battery.maxEnergyStored
-    }
+    override fun getMaxEnergyStored(from: EnumFacing?): Int = battery.maxEnergyStored
 
-    override fun getEnergyStored(from: EnumFacing?): Int {
-        return battery.energyStored
-    }
+    override fun getEnergyStored(from: EnumFacing?): Int = battery.energyStored
 
-    override fun canConnectEnergy(from: EnumFacing?): Boolean {
-        return true
-    }
+    override fun canConnectEnergy(from: EnumFacing?): Boolean = true
 
-    override fun extractEnergy(from: EnumFacing?, maxExtract: Int, simulate: Boolean): Int {
-        return battery.extractEnergy(maxExtract, simulate)
-    }
+    override fun extractEnergy(from: EnumFacing?, maxExtract: Int, simulate: Boolean): Int = battery.extractEnergy(maxExtract, simulate)
+
+    //IEnergyStorage
+
+    override fun getMaxEnergyStored(): Int = battery.maxEnergyStored
+
+    override fun getEnergyStored(): Int = battery.energyStored
+
+    override fun extractEnergy(maxExtract: Int, simulate: Boolean): Int = battery.extractEnergy(maxExtract, simulate)
+
+    override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = 0
+
+    override fun canExtract(): Boolean = true
+
+    override fun canReceive(): Boolean = false
 
     // IFluidHandler
-    override fun drain(resource: FluidStack, doDrain: Boolean): FluidStack? {
-        return null
-    }
+    override fun drain(resource: FluidStack, doDrain: Boolean): FluidStack? = null
 
-    override fun drain(maxDrain: Int, doDrain: Boolean): FluidStack? {
-        return null
-    }
+    override fun drain(maxDrain: Int, doDrain: Boolean): FluidStack? = null
 
-    override fun fill(resource: FluidStack, doFill: Boolean): Int {
-        return if (resource.fluid !== null && resource.fluid.name == "steam") {
-            steamTank.fill(resource, doFill)
-        } else 0
-    }
+    override fun fill(resource: FluidStack, doFill: Boolean): Int = steamTank.fill(resource, doFill)
 
-    override fun getTankProperties(): Array<IFluidTankProperties> {
-        return steamTank.run {
-            arrayOf(FluidTankProperties(
-                    fluid,
-                    capacity,
-                    canFill(),
-                    canDrain()
-            ))
-        }
-    }
+    override fun getTankProperties(): Array<IFluidTankProperties> =
+            steamTank.run {
+                arrayOf(FluidTankProperties(
+                        fluid,
+                        capacity,
+                        canFill(),
+                        canDrain()
+                ))
+            }
 
     fun getInfo(): String = "Fluid Amount: ${steamTank.fluidAmount}mB, Energy Amount: ${battery.energyStored}RF"
 

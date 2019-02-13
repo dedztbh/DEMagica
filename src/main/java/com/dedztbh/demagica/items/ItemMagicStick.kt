@@ -32,6 +32,7 @@ class ItemMagicStick : Item() {
             worldIn.getTileEntity(it)
         }
         if (entity != null) {
+            //TODO: Fix fluid container recognition
             when (entity) {
                 is IFluidHandler -> {
                     entity.fill(FluidRegistry.getFluidStack("steam", Int.MAX_VALUE), true)
