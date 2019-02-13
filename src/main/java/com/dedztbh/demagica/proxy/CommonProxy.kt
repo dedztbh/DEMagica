@@ -7,6 +7,7 @@ import com.dedztbh.demagica.global.Config
 import com.dedztbh.demagica.global.ModBlocks
 import com.dedztbh.demagica.items.ItemMagicStick
 import net.minecraft.block.Block
+import net.minecraft.entity.projectile.EntityThrowable
 import net.minecraft.item.Item
 import net.minecraft.item.ItemBlock
 import net.minecraftforge.common.config.Configuration

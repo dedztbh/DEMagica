@@ -3,6 +3,7 @@ package com.dedztbh.demagica.blocks.tileEntities
 import cofh.redstoneflux.api.IEnergyProvider
 import cofh.redstoneflux.api.IEnergyReceiver
 import cofh.redstoneflux.impl.EnergyStorage
+import com.dedztbh.demagica.util.P
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.EnumFacing
@@ -21,8 +22,6 @@ const val TANK_MB_CAPACITY = 16000
 const val MB_CONSUMED = 50
 const val RF_GENERATED = 50
 const val CONVERT_TICKS = 1
-
-typealias P<T, R> = Pair<T, R>
 
 class BlockMagicTileEntity :
         TileEntity(),
