@@ -12,8 +12,14 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+classes
+
+!/run/*
+/run/crash-reports
+/run/logs
+
 # Package Files #
-*.jar
+#*.jar
 *.war
 *.nar
 *.ear
@@ -137,3 +143,4 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
