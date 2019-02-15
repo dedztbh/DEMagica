@@ -1,13 +1,13 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "demagica",
+  "name": "DEMagica",
+  "description": "A magic mod (I hope)",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "https://github.com/DEDZTBH/DEMagica",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
+  "authorList": ["DEDZTBH"],
   "credits": "The Forge and FML guys, for making this example",
   "logoFile": "",
   "screenshots": [],
