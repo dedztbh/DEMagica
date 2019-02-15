@@ -26,3 +26,5 @@ fun Random.nextVec3d(maxSpread: Double): Vec3d =
             Vec3d(0.0, 0.0, 0.0)
         }
 
+fun Random.nextPitch(): Float =
+        0.4f / (nextFloat() * 0.4f + 0.8f)

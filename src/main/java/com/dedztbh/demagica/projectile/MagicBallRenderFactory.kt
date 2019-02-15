@@ -17,16 +17,16 @@ import org.lwjgl.opengl.GL11
  */
 class MagicBallRenderFactory<T : Entity> : IRenderFactory<T> {
     override fun createRenderFor(manager: RenderManager): Render<in T> {
-        return RenderEMP(manager)
+        return RenderBall(manager)
     }
 
-    inner class RenderEMP(manager: RenderManager) : Render<T>(manager) {
+    inner class RenderBall(manager: RenderManager) : Render<T>(manager) {
 
         private val model: ModelBase
-        val texture = ResourceLocation(DEMagica.MODID, "textures/block/magic2.png")
+        val texture = ResourceLocation(DEMagica.MODID, "textures/blocks/magic2.png")
 
         init {
-            model = ModelEMP()
+            model = ModelBall()
         }
 
         override fun getEntityTexture(entity: T): ResourceLocation? {
@@ -42,7 +42,7 @@ class MagicBallRenderFactory<T : Entity> : IRenderFactory<T> {
         }
     }
 
-    class ModelEMP : ModelBase() {
+    class ModelBall : ModelBase() {
         internal var Shape1: ModelRenderer
         internal var Shape2: ModelRenderer
         internal var Shape3: ModelRenderer

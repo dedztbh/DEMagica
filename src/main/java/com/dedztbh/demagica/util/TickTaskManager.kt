@@ -21,40 +21,39 @@ class TickTaskManager private constructor() {
         @JvmStatic
         fun tick(event: TickEvent.ServerTickEvent) {
             tickTaskManagersMap.forEach { _, tickTaskManager ->
-                mutableListOf<DelayedTask>().let { markForDeletion ->
-                    tickTaskManager.tasks.apply {
-                        //Tick DelayedTasks
-                        for (delayedTask in this) {
-                            delayedTask.apply {
-                                when {
-                                    ticksRemaining < 0L -> {
-                                        //Terminate now
+                mutableListOf<Task>().let { markForDeletion ->
+                    //Tick DelayedTasks
+                    for (delayedTask in tickTaskManager.tasks) {
+                        delayedTask.apply {
+                            when {
+                                ticksLeft < 0L -> {
+                                    //Terminate now!
+                                    markForDeletion.add(this)
+                                }
+                                ticksLeft > 0L -> {
+                                    //Waiting
+                                    ticksLeft--
+                                }
+                                ticksLeft == 0L -> {
+                                    //Execute and terminate/repeat
+                                    task()
+                                    if (repeat) {
+                                        ticksLeft = timerTicks
+                                    } else {
                                         markForDeletion.add(this)
-                                    }
-                                    ticksRemaining > 0L -> {
-                                        //Waiting
-                                        ticksRemaining--
-                                    }
-                                    ticksRemaining == 0L -> {
-                                        //Execute and terminate/repeat
-                                        task()
-                                        if (repeat) {
-                                            ticksRemaining = timerTicks
-                                        } else {
-                                            markForDeletion.add(this)
-                                        }
                                     }
                                 }
                             }
                         }
-
-                        //Remove finished DelayedTasks
-                        markForDeletion.forEach {
-                            it.terminationCallback()
-                            it.removedFlag = true
-                        }
-                        removeAll(markForDeletion)
                     }
+
+                    //Remove finished DelayedTasks
+                    markForDeletion.forEach {
+                        it.terminationCallback()
+                        it.isTerminated = true
+                    }
+                    tickTaskManager.tasks.removeAll(markForDeletion)
+
                 }
             }
         }
@@ -79,34 +78,35 @@ class TickTaskManager private constructor() {
                 tickTaskManagersMap.remove(objRef)
     }
 
-    private val tasks: MutableList<DelayedTask> = mutableListOf()
+    private val tasks: MutableList<Task> = mutableListOf()
 
-    fun runDelayedTask(secondsDelay: Double,
-                       repeat: Boolean = false,
-                       startImmediately: Boolean = false,
-                       task: () -> Unit) =
-            DelayedTask(
-                    ticksRemaining = (secondsDelay * 20).roundToLong(),
+    fun runTask(secondsDelay: Double,
+                repeat: Boolean = false,
+                startImmediately: Boolean = false,
+                task: () -> Unit) =
+            Task(
+                    ticksLeft = (secondsDelay * 20).roundToLong(),
                     task = task,
                     repeat = repeat,
                     startImmediately = startImmediately
             ).also {
                 tasks.add(it)
+                it.taskManager = this
             }
 
-    fun terminateDelayedTask(delayedTask: DelayedTask, terminationCallback: (() -> Unit)? = null) =
-            delayedTask.apply {
+    fun terminateTask(task: Task, terminationCallback: (() -> Unit)? = null) =
+            task.apply {
                 if (terminationCallback != null) {
                     this.terminationCallback = terminationCallback
                 }
-                ticksRemaining = -1
+                ticksLeft = -1
             }
 
     fun runSync(task: () -> Unit) =
-            DelayedTask(0, task).also { tasks.add(it) }
+            runTask(0.0, task = task)
 
-    inner class DelayedTask(
-            var ticksRemaining: Long,
+    inner class Task(
+            var ticksLeft: Long,
             val task: () -> Unit,
             val repeat: Boolean = false,
             startImmediately: Boolean = false
@@ -114,16 +114,20 @@ class TickTaskManager private constructor() {
 
         var terminationCallback: () -> Unit = {}
 
-        val timerTicks = ticksRemaining
+        val timerTicks = ticksLeft
 
-        var removedFlag = false
+        var isTerminated = false
+
+        lateinit var taskManager: TickTaskManager
 
         init {
             if (startImmediately) {
-                ticksRemaining = 0
+                ticksLeft = 0
             }
         }
 
-        fun isAboutToTerminate() = ticksRemaining < 0
+        fun isAboutToTerminate() = ticksLeft < 0
+
+        fun terminate() = taskManager.terminateTask(this)
     }
 }

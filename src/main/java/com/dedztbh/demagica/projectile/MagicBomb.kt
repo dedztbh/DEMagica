@@ -6,6 +6,7 @@ import net.minecraft.init.SoundEvents
 import net.minecraft.util.SoundCategory
 import net.minecraft.util.math.RayTraceResult
 import net.minecraft.world.World
+import kotlin.random.Random
 
 /**
  * Created by DEDZTBH on 2019-02-13.
@@ -20,12 +21,14 @@ class MagicBomb : MagicBall {
 
     constructor(worldIn: World, player: EntityPlayer) : super(worldIn, player)
 
-    constructor(worldIn: World, x: Double, y: Double, z: Double) : super(worldIn, x, y, z)
+    override var gravity: Double = 0.05
 
-    override fun onImpactTask(result: RayTraceResult) {
+    override fun onHit(raytraceResultIn: RayTraceResult) {
         if (world.isLocal()) {
             world.newExplosion(this, posX, posY, posZ, 5f, true, true)
-            world.playSound(thrower as EntityPlayer?, posX, posY, posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.AMBIENT, 3f, 0.5f)
+            world.playSound(thrower as EntityPlayer?, posX, posY, posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.AMBIENT, 64f, Random.nextFloat())
+
+            setDead()
         }
     }
 }

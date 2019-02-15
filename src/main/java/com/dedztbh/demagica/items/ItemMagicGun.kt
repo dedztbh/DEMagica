@@ -12,11 +12,14 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemBow
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ActionResult
+import net.minecraft.util.EnumActionResult
 import net.minecraft.util.EnumHand
 import net.minecraft.world.World
 import net.minecraftforge.client.model.ModelLoader
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+
+const val FIRE_INTERVAL = 0.25
 
 class ItemMagicGun : ItemBow() {
 
@@ -37,61 +40,52 @@ class ItemMagicGun : ItemBow() {
         ModelLoader.setCustomModelResourceLocation(this, 0, ModelResourceLocation(registryName!!, "inventory"))
     }
 
-    var delayedTaskFiring: TickTaskManager.DelayedTask? = null
+    private fun clearFiringTask() {
+        firingTask?.apply {
+            if (!isTerminated && !isAboutToTerminate()) {
+                terminate()
+                firingTask = null
+            }
+        }
+    }
+
+    var firingTask: TickTaskManager.Task? = null
 
     override fun onItemRightClick(worldIn: World, playerIn: EntityPlayer, handIn: EnumHand): ActionResult<ItemStack> {
-        playerIn.world.apply {
+        worldIn.apply {
             if (isLocal()) {
-                if (delayedTaskFiring == null || delayedTaskFiring!!.removedFlag) {
-                    delayedTaskFiring = taskManager.runDelayedTask(0.25, true, true) {
-                        spawnEntity(MagicBall(this, playerIn).apply {
-                            playerIn.apply {
-                                //                                println()
-//                                println("""
-//
-//                                    $rotationPitch
-//                                    $rotationYaw
-//                                """.trimIndent())
-                                // TODO： Fix display offset
-                                shoot(this, rotationPitch, rotationYaw, 0f, 20f, 1f)
-                            }
-                        })
-                    }
-
-                } else if (!delayedTaskFiring!!.isAboutToTerminate()) {
-                    taskManager.terminateDelayedTask(delayedTaskFiring!!)
+//                println("onItemRightClick")
+                if (firingTask != null) {
+                    clearFiringTask()
+                }
+                firingTask = taskManager.runTask(if (playerIn.isSneaking) 0.05 else FIRE_INTERVAL, repeat = true, startImmediately = true) {
+                    worldIn.spawnEntity(
+                            MagicBall(this, playerIn)
+                                    .apply {
+                                        shoot(playerIn, 5f, 1f)
+                                    })
                 }
             }
         }
-        return super.onItemRightClick(worldIn, playerIn, handIn)
+        playerIn.activeHand = handIn
+        return ActionResult.newResult(EnumActionResult.PASS, playerIn.getHeldItem(handIn))
     }
 
     override fun onPlayerStoppedUsing(stack: ItemStack, worldIn: World, entityLiving: EntityLivingBase, timeLeft: Int) {
         if (worldIn.isLocal()) {
-            if (delayedTaskFiring != null) {
-                taskManager.terminateDelayedTask(delayedTaskFiring!!)
-                delayedTaskFiring = null
-            }
+//            println("onPlayerStoppedUsing")
+            clearFiringTask()
         }
     }
-
-    override fun getMaxItemUseDuration(stack: ItemStack): Int = Int.MAX_VALUE
-
 
     override fun onEntitySwing(entityLiving: EntityLivingBase, stack: ItemStack): Boolean {
         entityLiving.world.apply {
             if (isLocal()) {
-                spawnEntity(MagicBomb(this, entityLiving as EntityPlayer).apply {
-                    entityLiving.apply {
-                        //                        println()
-//                        println("""
-//
-//                                    $rotationPitch
-//                                    $rotationYaw
-//                                """.trimIndent())
-                        shoot(this, rotationPitch, rotationYaw, 0f, 2.0f, 1f)
-                    }
-                })
+                spawnEntity(
+                        MagicBomb(this, entityLiving as EntityPlayer)
+                                .apply {
+                                    shoot(entityLiving, 3f, 1f)
+                                })
             }
         }
         return false

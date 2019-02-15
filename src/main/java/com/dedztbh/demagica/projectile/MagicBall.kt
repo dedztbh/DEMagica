@@ -2,10 +2,10 @@ package com.dedztbh.demagica.projectile
 
 import com.dedztbh.demagica.util.isLocal
 import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.projectile.EntityThrowable
+import net.minecraft.entity.projectile.EntityArrow
 import net.minecraft.init.SoundEvents
+import net.minecraft.item.ItemStack
 import net.minecraft.util.DamageSource
 import net.minecraft.util.SoundCategory
 import net.minecraft.util.math.RayTraceResult
@@ -19,53 +19,52 @@ import kotlin.random.Random
  * Project DEMagica
  */
 
-open class MagicBall : EntityThrowable, IThrowableEntity {
+open class MagicBall : EntityArrow, IThrowableEntity {
 
-    override fun shoot(entityThrower: Entity, rotationPitchIn: Float, rotationYawIn: Float, pitchOffset: Float, velocity: Float, inaccuracy: Float) {
-        super.shoot(entityThrower, rotationPitchIn, rotationYawIn, pitchOffset, velocity, inaccuracy)
-//        entityThrower.lookVec.also { v ->
-//            posX += v.x * 2
-//            posY += v.y * 2
-//            posZ += v.z * 2
-//        }
-    }
-
-    //    open val VELOCITY = 10.0
-    open val GRAVITY = 0.05f
-//    open val Position_offsetMultiplier = 2.0
-//    open val Position_maxSpread = 0.0
-//    open val Velocity_maxSpread = 0.0
-
-    constructor(worldIn: World) : super(worldIn)
+    constructor (worldIn: World) : super(worldIn)
 
     constructor(worldIn: World, player: EntityPlayer) : super(worldIn, player)
 
-    constructor(worldIn: World, x: Double, y: Double, z: Double) : super(worldIn, x, y, z)
-
-    //    var velocity = VELOCITY
-    var gravity = GRAVITY
-
-    fun playSound(thrower: EntityPlayer) {
-        world.playSound(thrower, posX, posY, posZ, SoundEvents.ENTITY_FIREWORK_BLAST, SoundCategory.PLAYERS, 0.5f, 0.4f / (Random.nextFloat() * 0.4f + 0.8f))
+    init {
+        damage = 10.0
     }
 
-    open fun onImpactTask(result: RayTraceResult) {
+    open var gravity = 0.01
+
+    override fun onUpdate() {
+        super.onUpdate()
+        motionY -= (gravity - 0.05000000074505806)
+    }
+
+    fun playShootingSound() {
+        world.playSound(thrower as EntityPlayer?, posX, posY, posZ, SoundEvents.ENTITY_FIREWORK_BLAST, SoundCategory.PLAYERS, 16f, Random.nextFloat())
+    }
+
+    fun shoot(shooter: Entity, velocity: Float = 5f, inaccuracy: Float = 1f) =
+            shooter.lookVec.run {
+                shoot(x, y, z, velocity, inaccuracy)
+            }
+
+
+    override fun onHit(raytraceResultIn: RayTraceResult) {
+//        super.onHit(raytraceResultIn)
         if (world.isLocal()) {
-            result.entityHit?.apply {
-                attackEntityFrom(DamageSource.GENERIC, 10f)
+            raytraceResultIn.entityHit?.apply {
+                attackEntityFrom(DamageSource.causeArrowDamage(this@MagicBall, thrower), damage.toFloat())
             }
         }
     }
 
-    override fun onImpact(result: RayTraceResult) {
-        onImpactTask(result)
-        setDead()
+    override fun getArrowStack(): ItemStack {
+        return ItemStack.EMPTY
     }
 
-    override fun getGravityVelocity(): Float = gravity
+    override fun setThrower(entity: Entity?) {
+        shootingEntity = entity
+        playShootingSound()
+    }
 
-    override fun setThrower(entity: Entity) {
-        thrower = entity as EntityLivingBase
-        playSound(thrower as EntityPlayer)
+    override fun getThrower(): Entity? {
+        return shootingEntity
     }
 }

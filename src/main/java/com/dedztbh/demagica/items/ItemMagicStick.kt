@@ -74,7 +74,7 @@ class ItemMagicStick : Item() {
                 entity.setVelocity(x * pow, y * pow, z * pow)
             }
 
-            taskManager.runDelayedTask(1.0, false) {
+            taskManager.runTask(1.0, false) {
                 entity.apply {
                     world.createExplosion(player, posX, posY, posZ, 5f, true)
                     world.playSound(player, posX, posY, posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 10f, 0.5f)
