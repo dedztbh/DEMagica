@@ -3,6 +3,7 @@ package com.dedztbh.demagica
 import com.dedztbh.demagica.global.Config
 import com.dedztbh.demagica.projectile.MagicBall
 import com.dedztbh.demagica.projectile.MagicBallRenderFactory
+import com.dedztbh.demagica.projectile.MagicBomb
 import com.dedztbh.demagica.proxy.CommonProxy
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.client.registry.RenderingRegistry
@@ -38,8 +39,12 @@ class DEMagica {
     fun preInit(event: FMLPreInitializationEvent) {
         logger = event.modLog
         proxy.preInit(event)
-        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicaball"), MagicBall::class.java, "MagicBall", 0, this, 64, 10, true)
+
+        //Register projectiles
+        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicball"), MagicBall::class.java, "MagicBall", 10, this, 64, 10, true)
         RenderingRegistry.registerEntityRenderingHandler(MagicBall::class.java, MagicBallRenderFactory())
+        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicbomb"), MagicBomb::class.java, "MagicBomb", 11, this, 64, 10, true)
+        RenderingRegistry.registerEntityRenderingHandler(MagicBomb::class.java, MagicBallRenderFactory())
     }
 
     @Mod.EventHandler

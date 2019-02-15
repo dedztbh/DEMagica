@@ -26,20 +26,22 @@ class TickTaskManager private constructor() {
                         //Tick DelayedTasks
                         for (delayedTask in this) {
                             delayedTask.apply {
-                                if (terminationFlag) {
-                                    markForDeletion.add(this)
-                                } else {
-                                    when {
-                                        ticksRemaining > 0L -> {
-                                            ticksRemaining--
-                                        }
-                                        ticksRemaining == 0L -> {
-                                            task()
-                                            if (repeat) {
-                                                ticksRemaining = timerTicks
-                                            } else {
-                                                markForDeletion.add(this)
-                                            }
+                                when {
+                                    ticksRemaining < 0L -> {
+                                        //Terminate now
+                                        markForDeletion.add(this)
+                                    }
+                                    ticksRemaining > 0L -> {
+                                        //Waiting
+                                        ticksRemaining--
+                                    }
+                                    ticksRemaining == 0L -> {
+                                        //Execute and terminate/repeat
+                                        task()
+                                        if (repeat) {
+                                            ticksRemaining = timerTicks
+                                        } else {
+                                            markForDeletion.add(this)
                                         }
                                     }
                                 }
@@ -48,6 +50,7 @@ class TickTaskManager private constructor() {
 
                         //Remove finished DelayedTasks
                         markForDeletion.forEach {
+                            it.terminationCallback()
                             it.removedFlag = true
                         }
                         removeAll(markForDeletion)
@@ -78,33 +81,49 @@ class TickTaskManager private constructor() {
 
     private val tasks: MutableList<DelayedTask> = mutableListOf()
 
-    fun runDelayedTask(secondsDelay: Double, repeat: Boolean = false, task: () -> Unit) =
-            DelayedTask((secondsDelay * 20).roundToLong(), task, repeat).also {
+    fun runDelayedTask(secondsDelay: Double,
+                       repeat: Boolean = false,
+                       startImmediately: Boolean = false,
+                       task: () -> Unit) =
+            DelayedTask(
+                    ticksRemaining = (secondsDelay * 20).roundToLong(),
+                    task = task,
+                    repeat = repeat,
+                    startImmediately = startImmediately
+            ).also {
                 tasks.add(it)
             }
 
-    fun terminateDelayedTask(delayedTask: DelayedTask) {
-        delayedTask.terminationFlag = true
-    }
+    fun terminateDelayedTask(delayedTask: DelayedTask, terminationCallback: (() -> Unit)? = null) =
+            delayedTask.apply {
+                if (terminationCallback != null) {
+                    this.terminationCallback = terminationCallback
+                }
+                ticksRemaining = -1
+            }
 
     fun runSync(task: () -> Unit) =
             DelayedTask(0, task).also { tasks.add(it) }
 
-    class DelayedTask(
+    inner class DelayedTask(
             var ticksRemaining: Long,
             val task: () -> Unit,
-            val repeat: Boolean = false
+            val repeat: Boolean = false,
+            startImmediately: Boolean = false
     ) {
-        val timerTicks = ticksRemaining
 
-        var terminationFlag = false
+        var terminationCallback: () -> Unit = {}
+
+        val timerTicks = ticksRemaining
 
         var removedFlag = false
 
         init {
-            if (ticksRemaining < 0) {
-                throw IllegalArgumentException("ticksRemaining cannot be negative")
+            if (startImmediately) {
+                ticksRemaining = 0
             }
         }
+
+        fun isAboutToTerminate() = ticksRemaining < 0
     }
 }

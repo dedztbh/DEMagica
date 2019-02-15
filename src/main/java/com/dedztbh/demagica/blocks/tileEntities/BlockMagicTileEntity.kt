@@ -4,6 +4,7 @@ import cofh.redstoneflux.api.IEnergyProvider
 import cofh.redstoneflux.api.IEnergyReceiver
 import cofh.redstoneflux.impl.EnergyStorage
 import com.dedztbh.demagica.util.P
+import com.dedztbh.demagica.util.isLocal
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.EnumFacing
@@ -108,7 +109,7 @@ class BlockMagicTileEntity :
 
     var tickCounter = 0
     override fun update() {
-        if (!world.isRemote) {
+        if (world.isLocal()) {
 
             var dirtyFlag = false
 
