@@ -11,6 +11,7 @@ import net.minecraft.util.SoundCategory
 import net.minecraft.util.math.RayTraceResult
 import net.minecraft.world.World
 import net.minecraftforge.fml.common.registry.IThrowableEntity
+import kotlin.random.Random
 
 
 /**
@@ -35,41 +36,17 @@ open class MagicBall : EntityThrowable, IThrowableEntity {
 //    open val Position_maxSpread = 0.0
 //    open val Velocity_maxSpread = 0.0
 
-    constructor(worldIn: World) : super(worldIn) {
-//        println(worldIn)
-    }
+    constructor(worldIn: World) : super(worldIn)
 
-    constructor(worldIn: World, player: EntityPlayer) : super(worldIn, player) {
-//        initPosition(player)
-//        initVelocity(player.lookVec)
-//        playSound(player)
-    }
+    constructor(worldIn: World, player: EntityPlayer) : super(worldIn, player)
+
+    constructor(worldIn: World, x: Double, y: Double, z: Double) : super(worldIn, x, y, z)
 
     //    var velocity = VELOCITY
     var gravity = GRAVITY
 
-//    fun initPosition(player: EntityPlayer, offsetMultiplier: Double = Position_offsetMultiplier, maxSpread: Double = Position_maxSpread) {
-//        player.let { p ->
-//            Random.nextVec3d(maxSpread).let { v ->
-//                posX = p.posX + offsetMultiplier * p.lookVec.x + v.x
-//                posY = p.posY + offsetMultiplier * p.lookVec.y + v.y
-//                posZ = p.posZ + offsetMultiplier * p.lookVec.z + v.z
-//            }
-//        }
-//    }
-//
-//    fun initVelocity(lookVec: Vec3d, velocityMultiplier: Double = VELOCITY, maxSpread: Double = Velocity_maxSpread) {
-//        velocity = velocityMultiplier
-//        lookVec.apply {
-//            setVelocity(x * velocity, y * velocity, z * velocity)
-//        }
-//        Random.nextVec3d(maxSpread).apply {
-//            addVelocity(x, y, z)
-//        }
-//    }
-
     fun playSound(thrower: EntityPlayer) {
-        world.playSound(thrower, posX, posY, posZ, SoundEvents.ENTITY_FIREWORK_BLAST, SoundCategory.PLAYERS, 10f, 0.5f)
+        world.playSound(thrower, posX, posY, posZ, SoundEvents.ENTITY_FIREWORK_BLAST, SoundCategory.PLAYERS, 0.5f, 0.4f / (Random.nextFloat() * 0.4f + 0.8f))
     }
 
     open fun onImpactTask(result: RayTraceResult) {
@@ -86,8 +63,6 @@ open class MagicBall : EntityThrowable, IThrowableEntity {
     }
 
     override fun getGravityVelocity(): Float = gravity
-
-    override fun canBePushed(): Boolean = !isDead
 
     override fun setThrower(entity: Entity) {
         thrower = entity as EntityLivingBase

@@ -16,13 +16,11 @@ class MagicBomb : MagicBall {
 
 //    override val VELOCITY = 2.0
 
-    constructor(worldIn: World) : super(worldIn) {
-//        println(worldIn.isRemote)
-    }
+    constructor(worldIn: World) : super(worldIn)
 
-    constructor(worldIn: World, player: EntityPlayer) : super(worldIn, player) {
-//        println(worldIn.isRemote)
-    }
+    constructor(worldIn: World, player: EntityPlayer) : super(worldIn, player)
+
+    constructor(worldIn: World, x: Double, y: Double, z: Double) : super(worldIn, x, y, z)
 
     override fun onImpactTask(result: RayTraceResult) {
         if (world.isLocal()) {

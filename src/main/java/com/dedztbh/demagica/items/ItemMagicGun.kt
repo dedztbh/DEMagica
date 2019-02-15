@@ -83,6 +83,12 @@ class ItemMagicGun : ItemBow() {
             if (isLocal()) {
                 spawnEntity(MagicBomb(this, entityLiving as EntityPlayer).apply {
                     entityLiving.apply {
+                        //                        println()
+//                        println("""
+//
+//                                    $rotationPitch
+//                                    $rotationYaw
+//                                """.trimIndent())
                         shoot(this, rotationPitch, rotationYaw, 0f, 2.0f, 1f)
                     }
                 })
