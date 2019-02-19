@@ -1,18 +1,12 @@
 package com.dedztbh.demagica
 
 import com.dedztbh.demagica.global.Config
-import com.dedztbh.demagica.projectile.MagicBall
-import com.dedztbh.demagica.projectile.MagicBallRenderFactory
-import com.dedztbh.demagica.projectile.MagicBomb
 import com.dedztbh.demagica.proxy.CommonProxy
-import net.minecraft.util.ResourceLocation
-import net.minecraftforge.fml.client.registry.RenderingRegistry
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.SidedProxy
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
-import net.minecraftforge.fml.common.registry.EntityRegistry
 import org.apache.logging.log4j.Logger
 
 
@@ -39,12 +33,6 @@ class DEMagica {
     fun preInit(event: FMLPreInitializationEvent) {
         logger = event.modLog
         proxy.preInit(event)
-
-        //Register projectiles
-        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicball"), MagicBall::class.java, "MagicBall", 10, this, 512, 1, true)
-        RenderingRegistry.registerEntityRenderingHandler(MagicBall::class.java, MagicBallRenderFactory())
-        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicbomb"), MagicBomb::class.java, "MagicBomb", 11, this, 128, 2, true)
-        RenderingRegistry.registerEntityRenderingHandler(MagicBomb::class.java, MagicBallRenderFactory())
     }
 
     @Mod.EventHandler

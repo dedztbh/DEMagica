@@ -2,6 +2,7 @@ package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.projectile.MagicBall
+import com.dedztbh.demagica.projectile.MagicBallHeavy
 import com.dedztbh.demagica.projectile.MagicBomb
 import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
@@ -20,9 +21,11 @@ import net.minecraftforge.client.model.ModelLoader
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
-const val FIRE_INTERVAL = 0.1
-
 class ItemMagicGun : ItemBow() {
+
+    val fireDelayMs = 50L
+
+    val heavyExtraDelayMs = 50L
 
     private val taskManager: TickTaskManager
 
@@ -47,20 +50,30 @@ class ItemMagicGun : ItemBow() {
     private fun asyncShootMagicBall(worldIn: World, playerIn: EntityPlayer, handIn: EnumHand, doShoot: Boolean = true): Job {
         return GlobalScope.launch {
             if (runningCoroutineTerminationFlag) {
-                runningCoroutineTerminationFlag = false
                 runningCoroutine = null
                 return@launch
             }
             if (doShoot) {
-                firingTask = taskManager.runSync {
-                    worldIn.spawnEntity(
-                            MagicBall(worldIn, playerIn)
-                                    .apply {
-                                        shoot(playerIn, 5f, 1f)
-                                    })
+                if (!playerIn.isSneaking) {
+                    firingTask = taskManager.runSync {
+                        worldIn.spawnEntity(
+                                MagicBall(worldIn, playerIn)
+                                        .apply {
+                                            shoot(playerIn, 5f, 1f)
+                                        })
+                    }
+                } else {
+                    firingTask = taskManager.runSync {
+                        worldIn.spawnEntity(
+                                MagicBallHeavy(worldIn, playerIn)
+                                        .apply {
+                                            shoot(playerIn, 4f, 1f)
+                                        })
+                    }
+                    delay(heavyExtraDelayMs)
                 }
             }
-            delay(if (playerIn.isSneaking) 0 else (FIRE_INTERVAL * 1000).toLong())
+            delay(fireDelayMs)
             if (firingTask?.isTerminated == true) {
                 firingTask = null
             }
@@ -76,6 +89,7 @@ class ItemMagicGun : ItemBow() {
                         runningCoroutine?.cancelAndJoin()
                     }
                 }
+                runningCoroutineTerminationFlag = false
                 runningCoroutine = asyncShootMagicBall(worldIn, playerIn, handIn)
             }
         }
@@ -95,10 +109,27 @@ class ItemMagicGun : ItemBow() {
                 spawnEntity(
                         MagicBomb(this, entityLiving as EntityPlayer)
                                 .apply {
-                                    shoot(entityLiving, 3f, 1f)
+                                    shoot(entityLiving, 5f, 1f)
                                 })
             }
         }
         return false
     }
+
+//    inner class WorldRunner {
+//        var server: World? = null
+//        var client: World? = null
+//        fun run(worldIn: World, task: (World, World) -> Unit) {
+//            if (worldIn.isRemote) {
+//                server = worldIn
+//            } else {
+//                client = worldIn
+//            }
+//            if (server != null && client != null) {
+//                task(server!!, client!!)
+//                server = null
+//                client = null
+//            }
+//        }
+//    }
 }

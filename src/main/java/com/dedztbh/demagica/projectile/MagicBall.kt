@@ -29,7 +29,7 @@ open class MagicBall : EntityArrow, IThrowableEntity {
         damage = 10.0
     }
 
-    open var gravity = 0.01
+    open var gravity = 0.02
 
     override fun onUpdate() {
         super.onUpdate()
@@ -52,6 +52,7 @@ open class MagicBall : EntityArrow, IThrowableEntity {
             raytraceResultIn.entityHit?.apply {
                 attackEntityFrom(DamageSource.causeArrowDamage(this@MagicBall, thrower), damage.toFloat())
             }
+            setDead()
         }
     }
 
@@ -61,8 +62,9 @@ open class MagicBall : EntityArrow, IThrowableEntity {
 
     override fun setThrower(entity: Entity?) {
         shootingEntity = entity
-//        println("setThrower")
-        playShootingSound()
+        if (shootingEntity != null && !isDead && getDistance(shootingEntity) <= 5) {
+            playShootingSound()
+        }
     }
 
     override fun getThrower(): Entity? {
