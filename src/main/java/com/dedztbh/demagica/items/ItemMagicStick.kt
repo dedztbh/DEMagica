@@ -71,7 +71,7 @@ class ItemMagicStick : Item() {
         if (entity.world.isLocal()) {
             player.lookVec.apply {
                 val pow = 20
-                entity.setVelocity(x * pow, y * pow, z * pow)
+                entity.addVelocity(x * pow, y * pow, z * pow)
             }
 
             taskManager.runTask(1.0, false) {

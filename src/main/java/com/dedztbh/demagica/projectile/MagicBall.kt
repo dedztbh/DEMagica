@@ -61,6 +61,7 @@ open class MagicBall : EntityArrow, IThrowableEntity {
 
     override fun setThrower(entity: Entity?) {
         shootingEntity = entity
+//        println("setThrower")
         playShootingSound()
     }
 

@@ -5,6 +5,7 @@ import com.dedztbh.demagica.projectile.MagicBall
 import com.dedztbh.demagica.projectile.MagicBomb
 import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
+import kotlinx.coroutines.*
 import net.minecraft.client.renderer.block.model.ModelResourceLocation
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.EntityLivingBase
@@ -19,7 +20,7 @@ import net.minecraftforge.client.model.ModelLoader
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
-const val FIRE_INTERVAL = 0.25
+const val FIRE_INTERVAL = 0.1
 
 class ItemMagicGun : ItemBow() {
 
@@ -40,31 +41,42 @@ class ItemMagicGun : ItemBow() {
         ModelLoader.setCustomModelResourceLocation(this, 0, ModelResourceLocation(registryName!!, "inventory"))
     }
 
-    private fun clearFiringTask() {
-        firingTask?.apply {
-            if (!isTerminated && !isAboutToTerminate()) {
-                terminate()
-                firingTask = null
-            }
-        }
-    }
-
+    var runningCoroutineTerminationFlag = false
     var firingTask: TickTaskManager.Task? = null
-
-    override fun onItemRightClick(worldIn: World, playerIn: EntityPlayer, handIn: EnumHand): ActionResult<ItemStack> {
-        worldIn.apply {
-            if (isLocal()) {
-//                println("onItemRightClick")
-                if (firingTask != null) {
-                    clearFiringTask()
-                }
-                firingTask = taskManager.runTask(if (playerIn.isSneaking) 0.05 else FIRE_INTERVAL, repeat = true, startImmediately = true) {
+    var runningCoroutine: Job? = null
+    private fun asyncShootMagicBall(worldIn: World, playerIn: EntityPlayer, handIn: EnumHand, doShoot: Boolean = true): Job {
+        return GlobalScope.launch {
+            if (runningCoroutineTerminationFlag) {
+                runningCoroutineTerminationFlag = false
+                runningCoroutine = null
+                return@launch
+            }
+            if (doShoot) {
+                firingTask = taskManager.runSync {
                     worldIn.spawnEntity(
-                            MagicBall(this, playerIn)
+                            MagicBall(worldIn, playerIn)
                                     .apply {
                                         shoot(playerIn, 5f, 1f)
                                     })
                 }
+            }
+            delay(if (playerIn.isSneaking) 0 else (FIRE_INTERVAL * 1000).toLong())
+            if (firingTask?.isTerminated == true) {
+                firingTask = null
+            }
+            runningCoroutine = asyncShootMagicBall(worldIn, playerIn, handIn, firingTask == null)
+        }
+    }
+
+    override fun onItemRightClick(worldIn: World, playerIn: EntityPlayer, handIn: EnumHand): ActionResult<ItemStack> {
+        worldIn.apply {
+            if (isLocal()) {
+                if (runningCoroutine?.isActive == true) {
+                    runBlocking {
+                        runningCoroutine?.cancelAndJoin()
+                    }
+                }
+                runningCoroutine = asyncShootMagicBall(worldIn, playerIn, handIn)
             }
         }
         playerIn.activeHand = handIn
@@ -73,8 +85,7 @@ class ItemMagicGun : ItemBow() {
 
     override fun onPlayerStoppedUsing(stack: ItemStack, worldIn: World, entityLiving: EntityLivingBase, timeLeft: Int) {
         if (worldIn.isLocal()) {
-//            println("onPlayerStoppedUsing")
-            clearFiringTask()
+            runningCoroutineTerminationFlag = true
         }
     }
 

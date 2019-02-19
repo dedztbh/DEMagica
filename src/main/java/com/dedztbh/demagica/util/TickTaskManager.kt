@@ -3,6 +3,7 @@ package com.dedztbh.demagica.util
 import net.minecraftforge.common.MinecraftForge.EVENT_BUS
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToLong
 
 
@@ -22,6 +23,10 @@ class TickTaskManager private constructor() {
         fun tick(event: TickEvent.ServerTickEvent) {
             tickTaskManagersMap.forEach { _, tickTaskManager ->
                 mutableListOf<Task>().let { markForDeletion ->
+
+                    tickTaskManager.tasks.addAll(tickTaskManager.tasksToBeAdd)
+                    tickTaskManager.tasksToBeAdd = mutableListOf()
+
                     //Tick DelayedTasks
                     for (delayedTask in tickTaskManager.tasks) {
                         delayedTask.apply {
@@ -58,7 +63,7 @@ class TickTaskManager private constructor() {
             }
         }
 
-        val tickTaskManagersMap: MutableMap<Any, TickTaskManager> = mutableMapOf()
+        val tickTaskManagersMap = ConcurrentHashMap<Any, TickTaskManager>()
 
         @JvmStatic
         fun create(objRef: Any) = TickTaskManager().also {
@@ -78,7 +83,9 @@ class TickTaskManager private constructor() {
                 tickTaskManagersMap.remove(objRef)
     }
 
-    private val tasks: MutableList<Task> = mutableListOf()
+    private val tasks = mutableListOf<Task>()
+
+    private var tasksToBeAdd = mutableListOf<Task>()
 
     fun runTask(secondsDelay: Double,
                 repeat: Boolean = false,
@@ -90,7 +97,7 @@ class TickTaskManager private constructor() {
                     repeat = repeat,
                     startImmediately = startImmediately
             ).also {
-                tasks.add(it)
+                tasksToBeAdd.add(it)
                 it.taskManager = this
             }
 
