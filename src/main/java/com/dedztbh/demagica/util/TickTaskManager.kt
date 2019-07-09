@@ -23,44 +23,44 @@ class TickTaskManager private constructor() {
         @JvmStatic
         fun tick(event: TickEvent.ServerTickEvent) {
             tickTaskManagersMap.forEach { (_, tickTaskManager) ->
-                mutableListOf<Task>().let { markForDeletion ->
+                val terminatedTasks = mutableListOf<Task>()
+                tickTaskManager.tasks.addAll(tickTaskManager.tasksToBeAdd)
+                // ignoring newly created task into the old list
+                tickTaskManager.tasksToBeAdd = mutableListOf()
 
-                    tickTaskManager.tasks.addAll(tickTaskManager.tasksToBeAdd)
-                    // ignoring newly created task into the old list
-                    tickTaskManager.tasksToBeAdd = mutableListOf()
-
-                    //Tick DelayedTasks
-                    for (delayedTask in tickTaskManager.tasks) {
-                        delayedTask.apply {
-                            when {
-                                ticksLeft < 0L -> {
-                                    //Terminate now!
-                                    markForDeletion.add(this)
+                //Tick DelayedTasks
+                for (delayedTask in tickTaskManager.tasks) {
+                    delayedTask.apply {
+                        when (runningState()) {
+                            Task.State.WILL_TERMINATE -> {
+                                //Terminate now!
+                                terminatedTasks.add(this)
+                            }
+                            Task.State.WILL_EXECUTE_LATER -> {
+                                //Waiting
+                                ticksLeft--
+                            }
+                            Task.State.WILL_EXECUTE -> {
+                                //Execute and terminate/repeat
+                                task()
+                                if (repeat) {
+                                    ticksLeft = timerTicks
+                                } else {
+                                    terminatedTasks.add(this)
                                 }
-                                ticksLeft > 0L -> {
-                                    //Waiting
-                                    ticksLeft--
-                                }
-                                ticksLeft == 0L -> {
-                                    //Execute and terminate/repeat
-                                    task()
-                                    if (repeat) {
-                                        ticksLeft = timerTicks
-                                    } else {
-                                        markForDeletion.add(this)
-                                    }
-                                }
+                            }
+                            else -> {
+                                // Should never happen
                             }
                         }
                     }
+                }
 
-                    //Remove finished DelayedTasks
-                    markForDeletion.forEach {
-                        it.terminationCallback()
-                        it.isTerminated = true
-                        tickTaskManager.tasks.remove(it)
-                    }
-
+                //Remove finished Tasks
+                terminatedTasks.forEach {
+                    it.onTerminate()
+                    it.isTerminated = true
+                    tickTaskManager.tasks.remove(it)
                 }
             }
         }
@@ -103,10 +103,10 @@ class TickTaskManager private constructor() {
                 tasksToBeAdd.add(it)
             }
 
-    fun terminateTask(task: Task, terminationCallback: (() -> Unit)? = null) =
+    fun terminateTask(task: Task, onTerminate: (() -> Unit)? = null) =
             task.apply {
-                if (terminationCallback != null) {
-                    this.terminationCallback = terminationCallback
+                if (onTerminate != null) {
+                    this.onTerminate = onTerminate
                 }
                 ticksLeft = -1
             }
@@ -116,19 +116,12 @@ class TickTaskManager private constructor() {
 
     class Task(
             var ticksLeft: Long,
-            val task: () -> Unit,
             taskManager: TickTaskManager,
             val repeat: Boolean = false,
-            startImmediately: Boolean = false
+            startImmediately: Boolean = false,
+            val task: () -> Unit
     ) {
-
-        var terminationCallback: () -> Unit = {}
-
-        val timerTicks = ticksLeft
-
-        var isTerminated = false
-
-        val taskManager: WeakReference<out TickTaskManager>
+        private val taskManager: WeakReference<out TickTaskManager>
 
         init {
             if (startImmediately) {
@@ -137,8 +130,30 @@ class TickTaskManager private constructor() {
             this.taskManager = WeakReference(taskManager)
         }
 
-        fun isAboutToTerminate() = ticksLeft < 0
+        val timerTicks = ticksLeft
+
+        var isTerminated = false
+
+        var onTerminate: () -> Unit = {}
 
         fun terminate() = taskManager.get()?.terminateTask(this)
+
+        fun runningState() =
+                if (isTerminated) {
+                    State.TERMINATED
+                } else {
+                    when {
+                        ticksLeft < 0L -> State.WILL_TERMINATE
+                        ticksLeft == 0L -> State.WILL_EXECUTE
+                        else -> State.WILL_EXECUTE_LATER
+                    }
+                }
+
+        enum class State {
+            WILL_TERMINATE,
+            WILL_EXECUTE,
+            WILL_EXECUTE_LATER,
+            TERMINATED
+        }
     }
 }
