@@ -7,7 +7,6 @@
       <module name="DEMagica_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
-  <component name="Encoding" addBOMForNewFiles="with NO BOM" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
@@ -151,7 +150,7 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DEMagica.iml" filepath="$PROJECT_DIR$/DEMagica.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DEMagica.iml" filepath="$PROJECT_DIR$/DEMagica.iml" group="DEMagica" />
       <module fileurl="file://$PROJECT_DIR$/DEMagica_api.iml" filepath="$PROJECT_DIR$/DEMagica_api.iml" group="DEMagica" />
       <module fileurl="file://$PROJECT_DIR$/DEMagica_main.iml" filepath="$PROJECT_DIR$/DEMagica_main.iml" group="DEMagica" />
       <module fileurl="file://$PROJECT_DIR$/DEMagica_test.iml" filepath="$PROJECT_DIR$/DEMagica_test.iml" group="DEMagica" />

@@ -3,7 +3,8 @@ package com.dedztbh.demagica.util
 import net.minecraftforge.common.MinecraftForge.EVENT_BUS
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
-import java.util.concurrent.ConcurrentHashMap
+import java.lang.ref.WeakReference
+import java.util.*
 import kotlin.math.roundToLong
 
 
@@ -21,10 +22,11 @@ class TickTaskManager private constructor() {
         @SubscribeEvent
         @JvmStatic
         fun tick(event: TickEvent.ServerTickEvent) {
-            tickTaskManagersMap.forEach { _, tickTaskManager ->
+            tickTaskManagersMap.forEach { (_, tickTaskManager) ->
                 mutableListOf<Task>().let { markForDeletion ->
 
                     tickTaskManager.tasks.addAll(tickTaskManager.tasksToBeAdd)
+                    // ignoring newly created task into the old list
                     tickTaskManager.tasksToBeAdd = mutableListOf()
 
                     //Tick DelayedTasks
@@ -56,14 +58,14 @@ class TickTaskManager private constructor() {
                     markForDeletion.forEach {
                         it.terminationCallback()
                         it.isTerminated = true
+                        tickTaskManager.tasks.remove(it)
                     }
-                    tickTaskManager.tasks.removeAll(markForDeletion)
 
                 }
             }
         }
 
-        val tickTaskManagersMap = ConcurrentHashMap<Any, TickTaskManager>()
+        val tickTaskManagersMap = WeakHashMap<Any, TickTaskManager>()
 
         @JvmStatic
         fun create(objRef: Any) = TickTaskManager().also {
@@ -95,10 +97,10 @@ class TickTaskManager private constructor() {
                     ticksLeft = (secondsDelay * 20).roundToLong(),
                     task = task,
                     repeat = repeat,
-                    startImmediately = startImmediately
+                    startImmediately = startImmediately,
+                    taskManager = this
             ).also {
                 tasksToBeAdd.add(it)
-                it.taskManager = this
             }
 
     fun terminateTask(task: Task, terminationCallback: (() -> Unit)? = null) =
@@ -112,9 +114,10 @@ class TickTaskManager private constructor() {
     fun runSync(task: () -> Unit) =
             runTask(0.0, task = task)
 
-    inner class Task(
+    class Task(
             var ticksLeft: Long,
             val task: () -> Unit,
+            taskManager: TickTaskManager,
             val repeat: Boolean = false,
             startImmediately: Boolean = false
     ) {
@@ -125,16 +128,17 @@ class TickTaskManager private constructor() {
 
         var isTerminated = false
 
-        lateinit var taskManager: TickTaskManager
+        val taskManager: WeakReference<out TickTaskManager>
 
         init {
             if (startImmediately) {
                 ticksLeft = 0
             }
+            this.taskManager = WeakReference(taskManager)
         }
 
         fun isAboutToTerminate() = ticksLeft < 0
 
-        fun terminate() = taskManager.terminateTask(this)
+        fun terminate() = taskManager.get()?.terminateTask(this)
     }
 }
