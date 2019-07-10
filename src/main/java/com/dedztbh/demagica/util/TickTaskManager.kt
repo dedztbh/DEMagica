@@ -1,70 +1,60 @@
 package com.dedztbh.demagica.util
 
-import net.minecraftforge.common.MinecraftForge.EVENT_BUS
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
 import java.util.*
-import kotlin.math.roundToLong
 
 
 /**
  * Created by DEDZTBH on 19-2-13.
  * Project DEMagica
  */
+
 class TickTaskManager private constructor() {
 
     companion object {
-        init {
-            EVENT_BUS.register(TickTaskManager::class.java)
-        }
-
-        @SubscribeEvent
         @JvmStatic
-        fun tick(event: TickEvent.ServerTickEvent) {
-            tickTaskManagersMap.forEach { (_, tickTaskManager) ->
-                val terminatedTasks = mutableListOf<Task>()
-                tickTaskManager.tasks.addAll(tickTaskManager.tasksToBeAdd)
-                // ignoring newly created task into the old list
-                tickTaskManager.tasksToBeAdd = mutableListOf()
+        fun tick() = tickTaskManagersMap.forEach { (_, tickTaskManager) ->
+            val terminatedTasks = mutableListOf<Task>()
+            tickTaskManager.tasks.addAll(tickTaskManager.tasksToBeAdd)
+            // ignoring newly created task into the old list
+            tickTaskManager.tasksToBeAdd = mutableListOf()
 
-                //Tick DelayedTasks
-                for (delayedTask in tickTaskManager.tasks) {
-                    delayedTask.apply {
-                        when (runningState()) {
-                            State.WILL_TERMINATE -> {
-                                //Terminate now!
+            //Tick DelayedTasks
+            for (delayedTask in tickTaskManager.tasks) {
+                delayedTask.apply {
+                    when (runningState()) {
+                        State.WILL_TERMINATE -> {
+                            //Terminate now!
+                            terminatedTasks.add(this)
+                        }
+                        State.WILL_EXECUTE_LATER -> {
+                            //Waiting
+                            ticksLeft--
+                        }
+                        State.WILL_EXECUTE -> {
+                            //Execute and terminate/repeat
+                            task()
+                            if (repeat) {
+                                ticksLeft = timerTicks
+                            } else {
                                 terminatedTasks.add(this)
                             }
-                            State.WILL_EXECUTE_LATER -> {
-                                //Waiting
-                                ticksLeft--
-                            }
-                            State.WILL_EXECUTE -> {
-                                //Execute and terminate/repeat
-                                task()
-                                if (repeat) {
-                                    ticksLeft = timerTicks
-                                } else {
-                                    terminatedTasks.add(this)
-                                }
-                            }
-                            else -> {
-                                // Should never happen
-                            }
+                        }
+                        else -> {
+                            // Should never happen
                         }
                     }
                 }
+            }
 
-                //Remove finished Tasks
-                terminatedTasks.forEach {
-                    it.onTerminate()
-                    it.isTerminated = true
-                    tickTaskManager.tasks.remove(it)
-                }
+            //Remove finished Tasks
+            terminatedTasks.forEach {
+                it.onTerminate()
+                it.isTerminated = true
+                tickTaskManager.tasks.remove(it)
             }
         }
 
-        val tickTaskManagersMap = WeakHashMap<Any, TickTaskManager>()
+        private val tickTaskManagersMap = WeakHashMap<Any, TickTaskManager>()
 
         @JvmStatic
         fun create(objRef: Any) = TickTaskManager().also {
@@ -88,19 +78,19 @@ class TickTaskManager private constructor() {
 
     private var tasksToBeAdd = mutableListOf<Task>()
 
-    fun runTask(secondsDelay: Double,
+    fun runTask(ticksDelay: Long,
                 repeat: Boolean = false,
                 startImmediately: Boolean = false,
                 task: () -> Unit) =
             Task(
-                    ticksLeft = (secondsDelay * 20).roundToLong(),
+                    ticksLeft = ticksDelay,
                     task = task,
                     repeat = repeat,
                     startImmediately = startImmediately
             ).run()
 
     fun runSync(task: () -> Unit) =
-            runTask(0.0, task = task)
+            runTask(0, task = task)
 
     fun terminateTask(task: Task, onTerminate: (() -> Unit)? = null) = task.terminate(onTerminate)
 
@@ -133,9 +123,8 @@ class TickTaskManager private constructor() {
                     }
                 }
 
-        fun run(): Task {
+        fun run(): Task = apply {
             this@TickTaskManager.tasksToBeAdd.add(this)
-            return this
         }
 
         fun terminate(onTerminate: (() -> Unit)? = null) {

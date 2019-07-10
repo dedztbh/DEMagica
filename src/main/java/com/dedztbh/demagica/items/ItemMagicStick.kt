@@ -46,10 +46,10 @@ class ItemMagicStick : Item() {
     override fun onItemUse(player: EntityPlayer, worldIn: World, pos: BlockPos, hand: EnumHand, facing: EnumFacing, hitX: Float, hitY: Float, hitZ: Float): EnumActionResult {
         if (worldIn.isLocal()) {
             val entity = worldIn.getTileEntity(pos)
-            CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.let { fluidCapabililty ->
-                entity?.hasCapability(fluidCapabililty, null)?.let {
+            CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.let { fluidCapability ->
+                entity?.hasCapability(fluidCapability, null)?.let {
                     if (it) {
-                        entity.getCapability(fluidCapabililty, null)
+                        entity.getCapability(fluidCapability, null)
                                 ?.fill(FluidRegistry.getFluidStack("steam", Int.MAX_VALUE), true)
                                 .let {
                                     if (worldIn.isLocal()) {
@@ -74,7 +74,7 @@ class ItemMagicStick : Item() {
                 entity.addVelocity(x * pow, y * pow, z * pow)
             }
 
-            taskManager.runTask(1.0, false) {
+            taskManager.runTask(20, false) {
                 entity.apply {
                     world.createExplosion(player, posX, posY, posZ, 5f, true)
                     world.playSound(player, posX, posY, posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 10f, 0.5f)

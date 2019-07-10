@@ -2,6 +2,7 @@ package com.dedztbh.demagica.util
 
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
+import java.lang.ref.WeakReference
 import kotlin.random.Random
 
 /**
@@ -28,3 +29,5 @@ fun Random.nextVec3d(maxSpread: Double): Vec3d =
 
 fun Random.nextPitch(): Float =
         0.4f / (nextFloat() * 0.4f + 0.8f)
+
+fun <T> T.weakRef() = WeakReference(this)

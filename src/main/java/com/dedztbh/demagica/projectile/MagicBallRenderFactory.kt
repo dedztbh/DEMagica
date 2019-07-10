@@ -23,7 +23,7 @@ class MagicBallRenderFactory<T : Entity> : IRenderFactory<T> {
     inner class RenderBall(manager: RenderManager) : Render<T>(manager) {
 
         private val model: ModelBase
-        val texture = ResourceLocation(DEMagica.MODID, "textures/blocks/magic2.png")
+        private val texture = ResourceLocation(DEMagica.MODID, "textures/blocks/magic2.png")
 
         init {
             model = ModelBall()
@@ -43,10 +43,10 @@ class MagicBallRenderFactory<T : Entity> : IRenderFactory<T> {
     }
 
     class ModelBall : ModelBase() {
-        internal var Shape1: ModelRenderer
-        internal var Shape2: ModelRenderer
-        internal var Shape3: ModelRenderer
-        internal var Shape4: ModelRenderer
+        private var Shape1: ModelRenderer
+        private var Shape2: ModelRenderer
+        private var Shape3: ModelRenderer
+        private var Shape4: ModelRenderer
 
         init {
             textureWidth = 64
