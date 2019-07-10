@@ -3,7 +3,6 @@ package com.dedztbh.demagica.util
 import net.minecraftforge.common.MinecraftForge.EVENT_BUS
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
-import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.roundToLong
 
@@ -32,15 +31,15 @@ class TickTaskManager private constructor() {
                 for (delayedTask in tickTaskManager.tasks) {
                     delayedTask.apply {
                         when (runningState()) {
-                            Task.State.WILL_TERMINATE -> {
+                            State.WILL_TERMINATE -> {
                                 //Terminate now!
                                 terminatedTasks.add(this)
                             }
-                            Task.State.WILL_EXECUTE_LATER -> {
+                            State.WILL_EXECUTE_LATER -> {
                                 //Waiting
                                 ticksLeft--
                             }
-                            Task.State.WILL_EXECUTE -> {
+                            State.WILL_EXECUTE -> {
                                 //Execute and terminate/repeat
                                 task()
                                 if (repeat) {
@@ -97,46 +96,31 @@ class TickTaskManager private constructor() {
                     ticksLeft = (secondsDelay * 20).roundToLong(),
                     task = task,
                     repeat = repeat,
-                    startImmediately = startImmediately,
-                    taskManager = this
-            ).also {
-                tasksToBeAdd.add(it)
-            }
-
-    fun terminateTask(task: Task, onTerminate: (() -> Unit)? = null) =
-            task.apply {
-                if (onTerminate != null) {
-                    this.onTerminate = onTerminate
-                }
-                ticksLeft = -1
-            }
+                    startImmediately = startImmediately
+            ).run()
 
     fun runSync(task: () -> Unit) =
             runTask(0.0, task = task)
 
-    class Task(
-            var ticksLeft: Long,
-            taskManager: TickTaskManager,
+    fun terminateTask(task: Task, onTerminate: (() -> Unit)? = null) = task.terminate(onTerminate)
+
+    inner class Task(
+            var ticksLeft: Long = 0L,
             val repeat: Boolean = false,
             startImmediately: Boolean = false,
             val task: () -> Unit
     ) {
-        private val taskManager: WeakReference<out TickTaskManager>
-
         init {
             if (startImmediately) {
                 ticksLeft = 0
             }
-            this.taskManager = WeakReference(taskManager)
         }
 
         val timerTicks = ticksLeft
 
         var isTerminated = false
 
-        var onTerminate: () -> Unit = {}
-
-        fun terminate() = taskManager.get()?.terminateTask(this)
+        var onTerminate = {}
 
         fun runningState() =
                 if (isTerminated) {
@@ -149,11 +133,23 @@ class TickTaskManager private constructor() {
                     }
                 }
 
-        enum class State {
-            WILL_TERMINATE,
-            WILL_EXECUTE,
-            WILL_EXECUTE_LATER,
-            TERMINATED
+        fun run(): Task {
+            this@TickTaskManager.tasksToBeAdd.add(this)
+            return this
         }
+
+        fun terminate(onTerminate: (() -> Unit)? = null) {
+            if (onTerminate != null) {
+                this.onTerminate = onTerminate
+            }
+            ticksLeft = -1
+        }
+    }
+
+    enum class State {
+        WILL_TERMINATE,
+        WILL_EXECUTE,
+        WILL_EXECUTE_LATER,
+        TERMINATED
     }
 }

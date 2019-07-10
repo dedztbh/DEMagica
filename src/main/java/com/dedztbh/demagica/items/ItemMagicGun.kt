@@ -115,21 +115,4 @@ class ItemMagicGun : ItemBow() {
         }
         return false
     }
-
-//    inner class WorldRunner {
-//        var server: World? = null
-//        var client: World? = null
-//        fun run(worldIn: World, task: (World, World) -> Unit) {
-//            if (worldIn.isRemote) {
-//                server = worldIn
-//            } else {
-//                client = worldIn
-//            }
-//            if (server != null && client != null) {
-//                task(server!!, client!!)
-//                server = null
-//                client = null
-//            }
-//        }
-//    }
 }
