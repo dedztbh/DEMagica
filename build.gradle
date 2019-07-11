@@ -4,19 +4,15 @@ buildscript {
         maven { url = "http://files.minecraftforge.net/maven" }
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-allopen:1.3.41"
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
     }
 }
 
-apply plugin: "kotlin-allopen"
+apply plugin: "kotlin"
 apply plugin: 'net.minecraftforge.gradle.forge'
-
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-allOpen {
-    annotation("com.dedztbh.demagica.util.AllOpen")
-}
 
 version = "1.0"
 group = "com.dedztbh.demagica" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -41,6 +37,7 @@ minecraft {
 }
 
 repositories {
+    mavenCentral()
     jcenter()
     maven {
         url "http://maven.shadowfacts.net/"
@@ -73,7 +70,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    compile group: "net.shadowfacts", name: "Forgelin", version: "1.8.0"
+    compile group: "net.shadowfacts", name: "Forgelin", version: "1.8.3"
     deobfCompile "cofh:RedstoneFlux:1.12-2.1.0.6:universal"
 }
 

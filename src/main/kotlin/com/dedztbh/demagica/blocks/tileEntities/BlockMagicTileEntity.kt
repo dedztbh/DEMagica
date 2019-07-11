@@ -46,10 +46,7 @@ class BlockMagicTileEntity :
 
     override fun <T : Any> getCapability(capability: Capability<T>, facing: EnumFacing?): T? =
             when (capability) {
-                CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY -> {
-                    this as T
-                }
-                CapabilityEnergy.ENERGY -> {
+                CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, CapabilityEnergy.ENERGY -> {
                     this as T
                 }
                 else -> {

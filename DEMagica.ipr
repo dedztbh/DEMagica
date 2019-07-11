@@ -2,11 +2,12 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="DEMagica_api" target="1.8" />
-      <module name="DEMagica_main" target="1.8" />
-      <module name="DEMagica_test" target="1.8" />
+      <module name="DEMagica.api" target="1.8" />
+      <module name="DEMagica.main" target="1.8" />
+      <module name="DEMagica.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
@@ -18,6 +19,7 @@
           </set>
         </option>
         <option name="useAutoImport" value="true" />
+        <option name="useQualifiedModuleNames" value="true" />
       </GradleProjectSettings>
     </option>
   </component>
@@ -27,137 +29,23 @@
     </profile>
     <version value="1.0" />
   </component>
-  <component name="Palette2">
-    <group name="Swing">
-      <item class="com.intellij.uiDesigner.HSpacer" tooltip-text="Horizontal Spacer" icon="/com/intellij/uiDesigner/icons/hspacer.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="1" hsize-policy="6" anchor="0" fill="1" />
-      </item>
-      <item class="com.intellij.uiDesigner.VSpacer" tooltip-text="Vertical Spacer" icon="/com/intellij/uiDesigner/icons/vspacer.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="6" hsize-policy="1" anchor="0" fill="2" />
-      </item>
-      <item class="javax.swing.JPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3" />
-      </item>
-      <item class="javax.swing.JScrollPane" icon="/com/intellij/uiDesigner/icons/scrollPane.png" removable="false" auto-create-binding="false" can-attach-label="true">
-        <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
-      </item>
-      <item class="javax.swing.JButton" icon="/com/intellij/uiDesigner/icons/button.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="3" anchor="0" fill="1" />
-        <initial-values>
-          <property name="text" value="Button" />
-        </initial-values>
-      </item>
-      <item class="javax.swing.JRadioButton" icon="/com/intellij/uiDesigner/icons/radioButton.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
-        <initial-values>
-          <property name="text" value="RadioButton" />
-        </initial-values>
-      </item>
-      <item class="javax.swing.JCheckBox" icon="/com/intellij/uiDesigner/icons/checkBox.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
-        <initial-values>
-          <property name="text" value="CheckBox" />
-        </initial-values>
-      </item>
-      <item class="javax.swing.JLabel" icon="/com/intellij/uiDesigner/icons/label.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="0" anchor="8" fill="0" />
-        <initial-values>
-          <property name="text" value="Label" />
-        </initial-values>
-      </item>
-      <item class="javax.swing.JTextField" icon="/com/intellij/uiDesigner/icons/textField.png" removable="false" auto-create-binding="true" can-attach-label="true">
-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
-          <preferred-size width="150" height="-1" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JPasswordField" icon="/com/intellij/uiDesigner/icons/passwordField.png" removable="false" auto-create-binding="true" can-attach-label="true">
-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
-          <preferred-size width="150" height="-1" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JFormattedTextField" icon="/com/intellij/uiDesigner/icons/formattedTextField.png" removable="false" auto-create-binding="true" can-attach-label="true">
-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
-          <preferred-size width="150" height="-1" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JTextArea" icon="/com/intellij/uiDesigner/icons/textArea.png" removable="false" auto-create-binding="true" can-attach-label="true">
-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
-          <preferred-size width="150" height="50" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JTextPane" icon="/com/intellij/uiDesigner/icons/textPane.png" removable="false" auto-create-binding="true" can-attach-label="true">
-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
-          <preferred-size width="150" height="50" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JEditorPane" icon="/com/intellij/uiDesigner/icons/editorPane.png" removable="false" auto-create-binding="true" can-attach-label="true">
-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
-          <preferred-size width="150" height="50" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JComboBox" icon="/com/intellij/uiDesigner/icons/comboBox.png" removable="false" auto-create-binding="true" can-attach-label="true">
-        <default-constraints vsize-policy="0" hsize-policy="2" anchor="8" fill="1" />
-      </item>
-      <item class="javax.swing.JTable" icon="/com/intellij/uiDesigner/icons/table.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
-          <preferred-size width="150" height="50" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JList" icon="/com/intellij/uiDesigner/icons/list.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="6" hsize-policy="2" anchor="0" fill="3">
-          <preferred-size width="150" height="50" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JTree" icon="/com/intellij/uiDesigner/icons/tree.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
-          <preferred-size width="150" height="50" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JTabbedPane" icon="/com/intellij/uiDesigner/icons/tabbedPane.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3">
-          <preferred-size width="200" height="200" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JSplitPane" icon="/com/intellij/uiDesigner/icons/splitPane.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3">
-          <preferred-size width="200" height="200" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JSpinner" icon="/com/intellij/uiDesigner/icons/spinner.png" removable="false" auto-create-binding="true" can-attach-label="true">
-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1" />
-      </item>
-      <item class="javax.swing.JSlider" icon="/com/intellij/uiDesigner/icons/slider.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1" />
-      </item>
-      <item class="javax.swing.JSeparator" icon="/com/intellij/uiDesigner/icons/separator.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3" />
-      </item>
-      <item class="javax.swing.JProgressBar" icon="/com/intellij/uiDesigner/icons/progressbar.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="1" />
-      </item>
-      <item class="javax.swing.JToolBar" icon="/com/intellij/uiDesigner/icons/toolbar.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="1">
-          <preferred-size width="-1" height="20" />
-        </default-constraints>
-      </item>
-      <item class="javax.swing.JToolBar$Separator" icon="/com/intellij/uiDesigner/icons/toolbarSeparator.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="0" anchor="0" fill="1" />
-      </item>
-      <item class="javax.swing.JScrollBar" icon="/com/intellij/uiDesigner/icons/scrollbar.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="6" hsize-policy="0" anchor="0" fill="2" />
-      </item>
-    </group>
-  </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DEMagica.iml" filepath="$PROJECT_DIR$/DEMagica.iml" group="DEMagica" />
-      <module fileurl="file://$PROJECT_DIR$/DEMagica_api.iml" filepath="$PROJECT_DIR$/DEMagica_api.iml" group="DEMagica" />
-      <module fileurl="file://$PROJECT_DIR$/DEMagica_main.iml" filepath="$PROJECT_DIR$/DEMagica_main.iml" group="DEMagica" />
-      <module fileurl="file://$PROJECT_DIR$/DEMagica_test.iml" filepath="$PROJECT_DIR$/DEMagica_test.iml" group="DEMagica" />
+      <module fileurl="file://$PROJECT_DIR$/DEMagica.iml" filepath="$PROJECT_DIR$/DEMagica.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DEMagica.api.iml" filepath="$PROJECT_DIR$/DEMagica.api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DEMagica.main.iml" filepath="$PROJECT_DIR$/DEMagica.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DEMagica.test.iml" filepath="$PROJECT_DIR$/DEMagica.test.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/classes" />
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="SuppressABINotification">
+    <option name="modulesWithSuppressedNotConfigured">
+      <set>
+        <option value="DEMagica" />
+      </set>
+    </option>
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
@@ -352,13 +240,11 @@
     </library>
     <library name="Gradle: deobf.cofh:RedstoneFlux:1.12-2.1.0.6">
       <CLASSES>
-        <root url="file://$PROJECT_DIR$/Could not find deobf.cofh:RedstoneFlux:1.12-2.1.0.6." />
         <root url="jar://$USER_HOME$/.gradle/caches/minecraft/deobfedDeps/deobf/cofh/RedstoneFlux/1.12-2.1.0.6/RedstoneFlux-1.12-2.1.0.6.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
         <root url="jar://$USER_HOME$/.gradle/caches/minecraft/deobfedDeps/deobf/cofh/RedstoneFlux/1.12-2.1.0.6/RedstoneFlux-1.12-2.1.0.6-sources.jar!/" />
-        <root url="jar://$USER_HOME$/.gradle/caches/minecraft/deobfedDeps/deobf/cofh/RedstoneFlux/1.12-2.0.0.1/RedstoneFlux-1.12-2.0.0.1-sources.jar!/" />
         <root url="jar://$USER_HOME$/.gradle/caches/minecraft/deobfedDeps/deobf/cofh/RedstoneFlux/1.12-2.1.0.7/RedstoneFlux-1.12-2.1.0.7-sources.jar!/" />
       </SOURCES>
     </library>
@@ -496,9 +382,9 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sf.trove4j/trove4j/3.0.3/109c5be93362e6e651e417c51d1863477a22969c/trove4j-3.0.3-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: net.shadowfacts:Forgelin:1.8.0">
+    <library name="Gradle: net.shadowfacts:Forgelin:1.8.3">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.shadowfacts/Forgelin/1.8.0/87d9fd9b473598351db979b9b0e7cb3faabbe01a/Forgelin-1.8.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.shadowfacts/Forgelin/1.8.3/5178c94da3bf54af3fa0edbad1d50c9b76d12586/Forgelin-1.8.3.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
@@ -591,92 +477,81 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.plexus/plexus-utils/3.1.0/d4062783613c4c6cf909c939d15fd1f2b584db03/plexus-utils-3.1.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.jetbrains.kotlin:kotlin-reflect:1.3.0">
+    <library name="Gradle: org.jetbrains.kotlin:kotlin-reflect:1.3.40">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.3.0/6fd129fd9ba8581f2cb9c58bfd431dda4ee0457e/kotlin-reflect-1.3.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.3.40/f2f8357e000fd80d8d799110f012b86fd4637386/kotlin-reflect-1.3.40.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.3.0/9a37f7b694e5c673ef260ed06f3b8eacdf1617fb/kotlin-reflect-1.3.0-javadoc.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.3.40/9f909e117bfdad6170873f2353b2718b12c9c688/kotlin-reflect-1.3.40-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.3.0/2c0e9afd8097b36a2288df59af219bfe2b78ab6d/kotlin-reflect-1.3.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.3.40/e03e6009b731f9140bc05b7ec950b9336bd8eedc/kotlin-reflect-1.3.40-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0" type="kotlin.common">
+    <library name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.40" type="kotlin.common">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.0/84a2e0288dc17cd64d692eb1e5e0de8cd5ff0846/kotlin-stdlib-common-1.3.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.40/ff8f3da514fc2877d1303d55e22d6da8156c29fb/kotlin-stdlib-common-1.3.40.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.0/c36801934d538758f12c9fd137586a2c947412d0/kotlin-stdlib-common-1.3.0-javadoc.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.40/344f49d6aeab2a04e26227bbeaa433fd2c894874/kotlin-stdlib-common-1.3.40-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.0/8bee30ce9d075088b3d590488a270e2c3ea39b3a/kotlin-stdlib-common-1.3.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.40/682cd7821872d1a3c1e8a3e6bdaabd17f2b71004/kotlin-stdlib-common-1.3.40-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.0">
+    <library name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.40">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.0/683e04a4e7f17437d7e1390480f312e122e42e9e/kotlin-stdlib-jdk7-1.3.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.40/2995de8f68444ad47f29e7b59962ac31e6301d7e/kotlin-stdlib-jdk7-1.3.40.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.0/c36801934d538758f12c9fd137586a2c947412d0/kotlin-stdlib-jdk7-1.3.0-javadoc.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.40/6fd2c0275289b1e7a7c4ffc92cc853e20c5f5942/kotlin-stdlib-jdk7-1.3.40-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.0/eb969cd43a30a1207d2c0fc3a2f933906ccee70a/kotlin-stdlib-jdk7-1.3.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.40/3d0c620918fdca4e2c542c3c85d139b35697a6f7/kotlin-stdlib-jdk7-1.3.40-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.0">
+    <library name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.40">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.0/7157cc6bc26328e2e97723d65d4ed7d7eddf603b/kotlin-stdlib-jdk8-1.3.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.40/2d1d0a2f27fd060787075c69113846803fc27734/kotlin-stdlib-jdk8-1.3.40.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.0/5a5d9fcda81299c765507a84f12562cb5441318e/kotlin-stdlib-jdk8-1.3.0-javadoc.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.40/6fd2c0275289b1e7a7c4ffc92cc853e20c5f5942/kotlin-stdlib-jdk8-1.3.40-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.0/21664c3fe18b12a644c20a0c3094482bbb2b9599/kotlin-stdlib-jdk8-1.3.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.40/765172795111fcc082ac9e4ccd766ce61505ee54/kotlin-stdlib-jdk8-1.3.40-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.0">
+    <library name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.40">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.0/a134b0cfe9bb44f98b0b3e889cda07923eea9428/kotlin-stdlib-1.3.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.40/b8a521c687329303778548e2f09b0ba5b2665236/kotlin-stdlib-1.3.40.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.0/c36801934d538758f12c9fd137586a2c947412d0/kotlin-stdlib-1.3.0-javadoc.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.40/344f49d6aeab2a04e26227bbeaa433fd2c894874/kotlin-stdlib-1.3.40-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.0/98515ba3feb571f93b923e61f643bdaed59d14ac/kotlin-stdlib-1.3.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.40/7af6fd6b9293e80fc7408493a764858a7f66b022/kotlin-stdlib-1.3.40-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.0.0" type="kotlin.common">
+    <library name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-common/1.0.0/5f7551ec1edc068deaa0397100a1f14f32270274/kotlinx-coroutines-core-common-1.0.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.2.1/3839faf625f4197acaeceeb6da000f011a2acb49/kotlinx-coroutines-core-1.2.1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-common/1.0.0/2de0788cf8e15f171aeff8c2ffcb1bf8240bbcd5/kotlinx-coroutines-core-common-1.0.0-javadoc.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.2.1/b6d336af1835ebcbe4505645cf592c5b9ad24ce0/kotlinx-coroutines-core-1.2.1-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-common/1.0.0/fbe00e9f1a3138c7d138fe4e02724366e9e42f24/kotlinx-coroutines-core-common-1.0.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.2.1/75e0ac676a7c7ef6239179b415d86ed002a7cc2c/kotlinx-coroutines-core-1.2.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0">
+    <library name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.2.1">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.0.0/a33c4bf7581f71f01d4ed660b09ca199abbb44da/kotlinx-coroutines-core-1.0.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8/1.2.1/4d891cee198626c08ac30028afdd743558507ad9/kotlinx-coroutines-jdk8-1.2.1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.0.0/ba1a536f0ce46feb08939c83bc9851945bcde648/kotlinx-coroutines-core-1.0.0-javadoc.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8/1.2.1/79707b971f21dd86c3f657f5087c03b6a65001d8/kotlinx-coroutines-jdk8-1.2.1-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.0.0/25f38c379fd216bf66c638fc5f5b595650c1bd64/kotlinx-coroutines-core-1.0.0-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.0.0">
-      <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8/1.0.0/db4a1430b9a0981e3c7607bcd7c19a80295dd2a6/kotlinx-coroutines-jdk8-1.0.0.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8/1.0.0/d1efb4fafc59c401e5db2b7f8957916633fb5f18/kotlinx-coroutines-jdk8-1.0.0-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8/1.0.0/5749bb37207a58196bbe52d4a388f38083370c73/kotlinx-coroutines-jdk8-1.0.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8/1.2.1/f3f2b4a59ad06b5dba069ec42e6e411f7607fa26/kotlinx-coroutines-jdk8-1.2.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Gradle: org.jetbrains:annotations:16.0.3">
