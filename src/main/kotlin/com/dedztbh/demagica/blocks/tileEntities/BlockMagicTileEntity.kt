@@ -3,8 +3,8 @@ package com.dedztbh.demagica.blocks.tileEntities
 import cofh.redstoneflux.api.IEnergyProvider
 import cofh.redstoneflux.api.IEnergyReceiver
 import cofh.redstoneflux.impl.EnergyStorage
-import com.dedztbh.demagica.util.P
 import com.dedztbh.demagica.util.isLocal
+import com.dedztbh.demagica.util.oppositeBlockPosAndEnumFacings
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.EnumFacing
@@ -33,10 +33,7 @@ class BlockMagicTileEntity :
         ITickable {
     override fun hasCapability(capability: Capability<*>, facing: EnumFacing?): Boolean =
             when (capability) {
-                CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY -> {
-                    true
-                }
-                CapabilityEnergy.ENERGY -> {
+                CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, CapabilityEnergy.ENERGY -> {
                     true
                 }
                 else -> {
@@ -123,30 +120,17 @@ class BlockMagicTileEntity :
                 }
             }
 
-            pos.apply {
-                listOf(P(up(), EnumFacing.DOWN),
-                        P(down(), EnumFacing.UP),
-                        P(east(), EnumFacing.WEST),
-                        P(west(), EnumFacing.EAST),
-                        P(south(), EnumFacing.NORTH),
-                        P(north(), EnumFacing.SOUTH)).let {
-                    for ((targetBlockPos, facing) in it) {
-                        world.getTileEntity(targetBlockPos).let { targetTE ->
-                            if (targetTE is IEnergyReceiver && targetTE.canConnectEnergy(facing)) {
-                                targetTE.receiveEnergy(
-                                        facing,
-                                        battery.extractEnergy(battery.maxExtract, true),
-                                        true)
-                                        .let { maxRFCanSent ->
-                                            if (maxRFCanSent > 0) {
-                                                battery.extractEnergy(maxRFCanSent, false)
-                                                targetTE.receiveEnergy(facing, maxRFCanSent, false)
-                                                dirtyFlag = true
-                                            }
-                                        }
+            for ((targetBlockPos, facing) in oppositeBlockPosAndEnumFacings()) {
+                val targetTE = world.getTileEntity(targetBlockPos)
+                if (targetTE is IEnergyReceiver && targetTE.canConnectEnergy(facing)) {
+                    targetTE.receiveEnergy(facing, battery.extractEnergy(battery.maxExtract, true), true)
+                            .let { maxRFCanSent ->
+                                if (maxRFCanSent > 0) {
+                                    battery.extractEnergy(maxRFCanSent, false)
+                                    targetTE.receiveEnergy(facing, maxRFCanSent, false)
+                                    dirtyFlag = true
+                                }
                             }
-                        }
-                    }
                 }
             }
 

@@ -1,5 +1,7 @@
 package com.dedztbh.demagica.util
 
+import net.minecraft.tileentity.TileEntity
+import net.minecraft.util.EnumFacing
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import java.lang.ref.WeakReference
@@ -31,3 +33,12 @@ fun Random.nextPitch(): Float =
         0.4f / (nextFloat() * 0.4f + 0.8f)
 
 fun <T> T.weakRef() = WeakReference(this)
+
+fun TileEntity.oppositeBlockPosAndEnumFacings() = pos.run {
+    listOf(P(up(), EnumFacing.DOWN),
+            P(down(), EnumFacing.UP),
+            P(east(), EnumFacing.WEST),
+            P(west(), EnumFacing.EAST),
+            P(south(), EnumFacing.NORTH),
+            P(north(), EnumFacing.SOUTH))
+}
