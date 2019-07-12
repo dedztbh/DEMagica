@@ -11,17 +11,17 @@ import net.minecraft.world.World
  * Project DEMagica
  */
 
-open class MagicBallHeavy : MagicBall {
+open class MagicBallKatyusha : MagicBall {
 
     constructor(worldIn: World) : super(worldIn)
 
     constructor(worldIn: World, player: EntityPlayer) : super(worldIn, player)
 
-    override var gravity: Double = 0.04
+    override var gravity: Double = 0.06
 
     override fun onHit(raytraceResultIn: RayTraceResult) {
         if (world.isLocal()) {
-            world.newExplosion(this, posX, posY, posZ, 2f, false, false)
+            world.newExplosion(this, posX, posY, posZ, 3f, true, true)
             setDead()
         }
     }

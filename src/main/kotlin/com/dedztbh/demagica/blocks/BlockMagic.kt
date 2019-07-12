@@ -2,6 +2,7 @@ package com.dedztbh.demagica.blocks
 
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.blocks.tileEntities.BlockMagicTileEntity
+import com.dedztbh.demagica.util.isLocal
 import net.minecraft.block.Block
 import net.minecraft.block.ITileEntityProvider
 import net.minecraft.block.material.Material
@@ -90,7 +91,7 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
                                   hitX: Float,
                                   hitY: Float,
                                   hitZ: Float): Boolean {
-        if (!worldIn.isRemote) {
+        if (worldIn.isLocal()) {
             if (side == state.getValue(FACING)) {
                 val component = TextComponentString(getTE(worldIn, pos).getInfo()).apply {
                     style.color = TextFormatting.GREEN

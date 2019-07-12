@@ -7,10 +7,7 @@ import com.dedztbh.demagica.global.Config
 import com.dedztbh.demagica.global.ModBlocks
 import com.dedztbh.demagica.items.ItemMagicGun
 import com.dedztbh.demagica.items.ItemMagicStick
-import com.dedztbh.demagica.projectile.MagicBall
-import com.dedztbh.demagica.projectile.MagicBallHeavy
-import com.dedztbh.demagica.projectile.MagicBallRenderFactory
-import com.dedztbh.demagica.projectile.MagicBomb
+import com.dedztbh.demagica.projectile.*
 import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.item.ItemBlock
@@ -60,10 +57,12 @@ open class CommonProxy {
         //Register projectiles
         EntityRegistry.registerModEntity(ResourceLocation("demagica:magicball"), MagicBall::class.java, "MagicBall", 10, DEMagica.instance, 512, 2, true)
         RenderingRegistry.registerEntityRenderingHandler(MagicBall::class.java, MagicBallRenderFactory())
-        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicbomb"), MagicBomb::class.java, "MagicBomb", 11, DEMagica.instance, 128, 4, true)
+        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicbomb"), MagicBomb::class.java, "MagicBomb", 11, DEMagica.instance, 512, 2, true)
         RenderingRegistry.registerEntityRenderingHandler(MagicBomb::class.java, MagicBallRenderFactory())
         EntityRegistry.registerModEntity(ResourceLocation("demagica:magicballheavy"), MagicBallHeavy::class.java, "MagicBallHeavy", 12, DEMagica.instance, 512, 2, true)
         RenderingRegistry.registerEntityRenderingHandler(MagicBallHeavy::class.java, MagicBallRenderFactory())
+        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicballkatyusha"), MagicBallKatyusha::class.java, "MagicBallKatyusha", 13, DEMagica.instance, 512, 2, true)
+        RenderingRegistry.registerEntityRenderingHandler(MagicBallKatyusha::class.java, MagicBallRenderFactory())
     }
 
     open fun init(e: FMLInitializationEvent) {}
