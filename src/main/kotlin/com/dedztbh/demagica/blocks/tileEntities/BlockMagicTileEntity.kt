@@ -103,32 +103,30 @@ class BlockMagicTileEntity :
     fun getInfo(): String = "Fluid Amount: ${steamTank.fluidAmount}mB, Energy Amount: ${battery.energyStored}RF"
 
     private var dirtyFlag = false
-    private val tickOS = TickTaskManager.OS().also {
-        it.create(this).apply {
-            runTask(CONVERT_TICKS.toLong(), repeat = true, startNow = true, isEvery = true) {
-                if (steamTank.drain(MB_CONSUMED, false)?.amount == MB_CONSUMED
-                        && battery.receiveEnergy(RF_GENERATED, true) == RF_GENERATED) {
-                    //have enough steam and tank has enough space, can convert
-                    steamTank.drain(MB_CONSUMED, true)
-                    battery.receiveEnergy(RF_GENERATED, false)
+    private val taskManager = TickTaskManager().apply {
+        runTask(CONVERT_TICKS.toLong(), repeat = true, startNow = true, isEvery = true) {
+            if (steamTank.drain(MB_CONSUMED, false)?.amount == MB_CONSUMED
+                    && battery.receiveEnergy(RF_GENERATED, true) == RF_GENERATED) {
+                //have enough steam and tank has enough space, can convert
+                steamTank.drain(MB_CONSUMED, true)
+                battery.receiveEnergy(RF_GENERATED, false)
 
-                    dirtyFlag = true
-                }
+                dirtyFlag = true
             }
+        }
 
-            runTask(repeat = true, startNow = true) {
-                for ((targetBlockPos, facing) in oppositeBlockPosAndEnumFacings()) {
-                    val targetTE = world.getTileEntity(targetBlockPos)
-                    if (targetTE is IEnergyReceiver && targetTE.canConnectEnergy(facing)) {
-                        targetTE.receiveEnergy(facing, battery.extractEnergy(battery.maxExtract, true), true)
-                                .let { maxRFCanSent ->
-                                    if (maxRFCanSent > 0) {
-                                        battery.extractEnergy(maxRFCanSent, false)
-                                        targetTE.receiveEnergy(facing, maxRFCanSent, false)
-                                        dirtyFlag = true
-                                    }
+        runTask(repeat = true, startNow = true) {
+            for ((targetBlockPos, facing) in oppositeBlockPosAndEnumFacings()) {
+                val targetTE = world.getTileEntity(targetBlockPos)
+                if (targetTE is IEnergyReceiver && targetTE.canConnectEnergy(facing)) {
+                    targetTE.receiveEnergy(facing, battery.extractEnergy(battery.maxExtract, true), true)
+                            .let { maxRFCanSent ->
+                                if (maxRFCanSent > 0) {
+                                    battery.extractEnergy(maxRFCanSent, false)
+                                    targetTE.receiveEnergy(facing, maxRFCanSent, false)
+                                    dirtyFlag = true
                                 }
-                    }
+                            }
                 }
             }
         }
@@ -136,7 +134,7 @@ class BlockMagicTileEntity :
 
     override fun update() {
         if (world.isLocal()) {
-            tickOS.tick()
+            taskManager.tick()
             if (dirtyFlag) {
                 markDirty()
                 dirtyFlag = false

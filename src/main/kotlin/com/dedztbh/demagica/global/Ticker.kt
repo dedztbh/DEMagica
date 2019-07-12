@@ -1,6 +1,6 @@
 package com.dedztbh.demagica.global
 
-import com.dedztbh.demagica.util.TickTaskManager
+import com.dedztbh.demagica.util.TickOS
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
@@ -10,11 +10,14 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
  * Project DEMagica
  */
 
+
+val ServerTickOS = TickOS()
+
 @Mod.EventBusSubscriber
 object Ticker {
     @SubscribeEvent
     @JvmStatic
-    fun tickTaskManagers(event: TickEvent.ServerTickEvent) {
-        TickTaskManager.tick()
+    fun onServerTick(event: TickEvent.ServerTickEvent) {
+        ServerTickOS.tick()
     }
 }

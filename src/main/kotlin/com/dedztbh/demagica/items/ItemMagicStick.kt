@@ -1,6 +1,7 @@
 package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
+import com.dedztbh.demagica.global.ServerTickOS
 import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
 import net.minecraft.client.renderer.block.model.ModelResourceLocation
@@ -35,7 +36,7 @@ class ItemMagicStick : Item() {
 
         creativeTab = CreativeTabs.TOOLS
 
-        taskManager = TickTaskManager.create(this)
+        taskManager = ServerTickOS.create(this)
     }
 
     @SideOnly(Side.CLIENT)

@@ -1,6 +1,7 @@
 package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
+import com.dedztbh.demagica.global.ServerTickOS
 import com.dedztbh.demagica.projectile.MagicBall
 import com.dedztbh.demagica.projectile.MagicBallHeavy
 import com.dedztbh.demagica.projectile.MagicBomb
@@ -36,7 +37,7 @@ class ItemMagicGun : ItemBow() {
         creativeTab = CreativeTabs.COMBAT
         maxStackSize = 1
 
-        taskManager = TickTaskManager.create(this)
+        taskManager = ServerTickOS.create(this)
     }
 
     @SideOnly(Side.CLIENT)
@@ -44,9 +45,9 @@ class ItemMagicGun : ItemBow() {
         ModelLoader.setCustomModelResourceLocation(this, 0, ModelResourceLocation(registryName!!, "inventory"))
     }
 
-    var runningCoroutineTerminationFlag = false
-    var firingTask: TickTaskManager.Task? = null
-    var runningCoroutine: Job? = null
+    private var runningCoroutineTerminationFlag = false
+    private var firingTask: TickTaskManager.Task? = null
+    private var runningCoroutine: Job? = null
     private fun asyncShootMagicBall(worldIn: World, playerIn: EntityPlayer, handIn: EnumHand, doShoot: Boolean = true): Job {
         return GlobalScope.launch {
             if (runningCoroutineTerminationFlag) {
