@@ -3,6 +3,7 @@ package com.dedztbh.demagica.blocks.tileEntities
 import cofh.redstoneflux.api.IEnergyProvider
 import cofh.redstoneflux.api.IEnergyReceiver
 import cofh.redstoneflux.impl.EnergyStorage
+import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
 import com.dedztbh.demagica.util.oppositeBlockPosAndEnumFacings
 import net.minecraft.nbt.NBTTagCompound
@@ -41,6 +42,7 @@ class BlockMagicTileEntity :
                 }
             }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : Any> getCapability(capability: Capability<T>, facing: EnumFacing?): T? =
             when (capability) {
                 CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, CapabilityEnergy.ENERGY -> {
@@ -89,27 +91,21 @@ class BlockMagicTileEntity :
 
     override fun fill(resource: FluidStack, doFill: Boolean): Int = steamTank.fill(resource, doFill)
 
-    override fun getTankProperties(): Array<IFluidTankProperties> =
-            steamTank.run {
-                arrayOf(FluidTankProperties(
-                        fluid,
-                        capacity,
-                        canFill(),
-                        canDrain()
-                ))
-            }
+    override fun getTankProperties(): Array<IFluidTankProperties> = steamTank.run {
+        arrayOf(FluidTankProperties(
+                fluid,
+                capacity,
+                canFill(),
+                canDrain()
+        ))
+    }
 
     fun getInfo(): String = "Fluid Amount: ${steamTank.fluidAmount}mB, Energy Amount: ${battery.energyStored}RF"
 
-    var tickCounter = 0
-    override fun update() {
-        if (world.isLocal()) {
-
-            var dirtyFlag = false
-
-            if (++tickCounter >= CONVERT_TICKS) {
-                tickCounter = 0
-
+    private var dirtyFlag = false
+    private val tickOS = TickTaskManager.OS().also {
+        it.create(this).apply {
+            runTask(CONVERT_TICKS.toLong(), repeat = true, startNow = true, isEvery = true) {
                 if (steamTank.drain(MB_CONSUMED, false)?.amount == MB_CONSUMED
                         && battery.receiveEnergy(RF_GENERATED, true) == RF_GENERATED) {
                     //have enough steam and tank has enough space, can convert
@@ -120,22 +116,30 @@ class BlockMagicTileEntity :
                 }
             }
 
-            for ((targetBlockPos, facing) in oppositeBlockPosAndEnumFacings()) {
-                val targetTE = world.getTileEntity(targetBlockPos)
-                if (targetTE is IEnergyReceiver && targetTE.canConnectEnergy(facing)) {
-                    targetTE.receiveEnergy(facing, battery.extractEnergy(battery.maxExtract, true), true)
-                            .let { maxRFCanSent ->
-                                if (maxRFCanSent > 0) {
-                                    battery.extractEnergy(maxRFCanSent, false)
-                                    targetTE.receiveEnergy(facing, maxRFCanSent, false)
-                                    dirtyFlag = true
+            runTask(repeat = true, startNow = true) {
+                for ((targetBlockPos, facing) in oppositeBlockPosAndEnumFacings()) {
+                    val targetTE = world.getTileEntity(targetBlockPos)
+                    if (targetTE is IEnergyReceiver && targetTE.canConnectEnergy(facing)) {
+                        targetTE.receiveEnergy(facing, battery.extractEnergy(battery.maxExtract, true), true)
+                                .let { maxRFCanSent ->
+                                    if (maxRFCanSent > 0) {
+                                        battery.extractEnergy(maxRFCanSent, false)
+                                        targetTE.receiveEnergy(facing, maxRFCanSent, false)
+                                        dirtyFlag = true
+                                    }
                                 }
-                            }
+                    }
                 }
             }
+        }
+    }
 
+    override fun update() {
+        if (world.isLocal()) {
+            tickOS.tick()
             if (dirtyFlag) {
                 markDirty()
+                dirtyFlag = false
             }
         }
     }

@@ -23,9 +23,9 @@ import net.minecraftforge.fml.relauncher.SideOnly
 
 class ItemMagicGun : ItemBow() {
 
-    val fireDelayMs = 50L
+    private val fireDelayMs = 50L
 
-    val heavyExtraDelayMs = 50L
+    private val heavyExtraDelayMs = 50L
 
     private val taskManager: TickTaskManager
 
@@ -55,7 +55,7 @@ class ItemMagicGun : ItemBow() {
             }
             if (doShoot) {
                 if (!playerIn.isSneaking) {
-                    firingTask = taskManager.runSync {
+                    firingTask = taskManager.runTask {
                         worldIn.spawnEntity(
                                 MagicBall(worldIn, playerIn)
                                         .apply {
@@ -63,7 +63,7 @@ class ItemMagicGun : ItemBow() {
                                         })
                     }
                 } else {
-                    firingTask = taskManager.runSync {
+                    firingTask = taskManager.runTask {
                         worldIn.spawnEntity(
                                 MagicBallHeavy(worldIn, playerIn)
                                         .apply {

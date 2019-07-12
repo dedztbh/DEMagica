@@ -28,14 +28,19 @@ import net.minecraftforge.fml.relauncher.SideOnly
 
 
 class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
+    override fun hasTileEntity(state: IBlockState): Boolean {
+        return true
+    }
 
     override fun createNewTileEntity(worldIn: World, meta: Int): TileEntity {
         return BlockMagicTileEntity()
     }
 
     companion object {
+        @JvmStatic
         val FACING = PropertyDirection.create("facing")
 
+        @JvmStatic
         fun getFacingFromEntity(clickedBlock: BlockPos, entity: EntityLivingBase): EnumFacing {
             return EnumFacing.getFacingFromVector(
                     (entity.posX - clickedBlock.x).toFloat(),
@@ -87,8 +92,9 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
                                   hitZ: Float): Boolean {
         if (!worldIn.isRemote) {
             if (side == state.getValue(FACING)) {
-                val component = TextComponentString(getTE(worldIn, pos).getInfo())
-                component.style.color = TextFormatting.GREEN
+                val component = TextComponentString(getTE(worldIn, pos).getInfo()).apply {
+                    style.color = TextFormatting.GREEN
+                }
                 playerIn.sendStatusMessage(component, false)
             }
         }
