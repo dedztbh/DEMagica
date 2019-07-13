@@ -53,12 +53,10 @@ class ItemMagicStick : Item() {
                         entity.getCapability(fluidCapability, null)
                                 ?.fill(FluidRegistry.getFluidStack("steam", Int.MAX_VALUE), true)
                                 .let {
-                                    if (worldIn.isLocal()) {
-                                        TextComponentString("Able to fill ${it}mb").let { component ->
-                                            component.style.color = TextFormatting.GREEN
-                                            player.sendStatusMessage(component, false)
-                                        }
-                                    }
+                                    player.sendStatusMessage(
+                                            TextComponentString("Able to fill ${it}mb").apply {
+                                                style.color = TextFormatting.GREEN
+                                            }, false)
                                 }
                     }
                 }

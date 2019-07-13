@@ -17,11 +17,16 @@ open class MagicBallHeavy : MagicBall {
 
     constructor(worldIn: World, player: EntityPlayer) : super(worldIn, player)
 
-    override var gravity: Double = 0.04
+    override var gravity: Double = 0.02
+
+    init {
+        damage = 20.0
+    }
 
     override fun onHit(raytraceResultIn: RayTraceResult) {
+        super.onHit(raytraceResultIn)
         if (world.isLocal()) {
-            world.newExplosion(this, posX, posY, posZ, 2f, false, false)
+            world.newExplosion(this, posX, posY, posZ, 1f, false, false)
             setDead()
         }
     }
