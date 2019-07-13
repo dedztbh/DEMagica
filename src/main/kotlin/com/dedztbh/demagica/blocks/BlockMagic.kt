@@ -9,6 +9,8 @@ import net.minecraft.block.material.Material
 import net.minecraft.block.properties.PropertyDirection
 import net.minecraft.block.state.BlockStateContainer
 import net.minecraft.block.state.IBlockState
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.block.model.ModelResourceLocation
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.EntityLivingBase
@@ -97,6 +99,23 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
                     style.color = TextFormatting.GREEN
                 }
                 playerIn.sendStatusMessage(component, false)
+            }
+
+            object : GuiScreen() {
+                override fun doesGuiPauseGame(): Boolean {
+                    return false
+                }
+
+                override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+                    fontRenderer.drawString(getTE(worldIn, pos).getInfo(), 100, 100, 0xFFFFFF)
+                    super.drawScreen(mouseX, mouseY, partialTicks)
+                }
+            }.run {
+                Minecraft.getMinecraft().apply {
+                    addScheduledTask {
+                        displayGuiScreen(this@run)
+                    }
+                }
             }
         }
         return true

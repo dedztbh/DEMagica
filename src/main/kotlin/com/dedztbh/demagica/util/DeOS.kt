@@ -11,7 +11,7 @@ open class DeOS<T>(private val constructObject: () -> T) {
 
     val processMap = WeakHashMap<Any, T>()
 
-    fun create(objRef: Any) = constructObject().also {
+    fun create(objRef: Any): T = constructObject().also {
         processMap[objRef] = it
     }
 
@@ -22,7 +22,7 @@ open class DeOS<T>(private val constructObject: () -> T) {
                     else
                         null
 
-    fun getOrCreate(objRef: Any) = get(objRef, true)!!
+    fun getOrCreate(objRef: Any): T = get(objRef, true)!!
 
     fun destroy(objRef: Any): T? =
             processMap.remove(objRef)
