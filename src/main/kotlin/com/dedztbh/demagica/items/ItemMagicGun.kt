@@ -6,6 +6,7 @@ import com.dedztbh.demagica.projectile.MagicBall
 import com.dedztbh.demagica.projectile.MagicBallHeavy
 import com.dedztbh.demagica.projectile.MagicBallKatyusha
 import com.dedztbh.demagica.projectile.MagicBomb
+import com.dedztbh.demagica.util.DeOS
 import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
 import kotlinx.coroutines.GlobalScope
@@ -29,30 +30,36 @@ import net.minecraft.world.World
 import net.minecraftforge.client.model.ModelLoader
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-import java.util.*
 
+const val MAGIC_GUN_MODE = "MagicGunMode"
 
 class ItemMagicGun : ItemBow() {
+
     enum class MagicGunMode(val delayMs: Long) {
         LIGHT(0L),
-        HEAVY(200L),
+        HEAVY(100L),
         KATYUSHA(200L),
         MORTAR(500L)
     }
 
-    private val taskManager: TickTaskManager
-    private val itemStackShooters = object : WeakHashMap<ItemStack, ItemStackShooter>() {
-        fun getOrCreate(key: ItemStack) =
-                get(key)?.let { it }
-                        ?: ItemStackShooter().also { set(key, it) }
+    private val taskManager: TickTaskManager = ServerTickOS.create(this)
+    private val stackShooterOS = DeOS { this.StackShooter() }
+
+    init {
+        setRegistryName("magicgun")
+        unlocalizedName = DEMagica.MODID + ".magicgun"
+
+        maxDamage = 0
+        creativeTab = CreativeTabs.COMBAT
+        maxStackSize = 1
     }
 
-    inner class ItemStackShooter {
+    inner class StackShooter {
         var runningCoroutineTerminationFlag = false
         var firingTask: TickTaskManager.Task? = null
         var runningCoroutine: Job? = null
 
-        fun asyncShootMagicBall(stack: ItemStack, stackShooter: ItemStackShooter, worldIn: World, playerIn: EntityPlayer, handIn: EnumHand, doShoot: Boolean = true): Job {
+        fun asyncShootMagicBall(stack: ItemStack, stackShooter: StackShooter, worldIn: World, playerIn: EntityPlayer, handIn: EnumHand, doShoot: Boolean = true): Job {
             return GlobalScope.launch {
                 stackShooter.run {
                     if (runningCoroutineTerminationFlag) {
@@ -60,7 +67,7 @@ class ItemMagicGun : ItemBow() {
                         return@launch
                     }
                     if (doShoot) {
-                        val magicGunMode = MagicGunMode.valueOf(stack.tagCompound!!.getString("MagicGunMode"))
+                        val magicGunMode = MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))
                         firingTask = taskManager.runTask {
                             worldIn.apply {
                                 when (magicGunMode) {
@@ -102,16 +109,6 @@ class ItemMagicGun : ItemBow() {
         }
     }
 
-    init {
-        setRegistryName("magicgun")
-        unlocalizedName = DEMagica.MODID + ".magicgun"
-
-        creativeTab = CreativeTabs.COMBAT
-        maxStackSize = 1
-
-        taskManager = ServerTickOS.create(this)
-    }
-
     @SideOnly(Side.CLIENT)
     fun initModel() {
         ModelLoader.setCustomModelResourceLocation(this, 0, ModelResourceLocation(registryName!!, "inventory"))
@@ -120,7 +117,7 @@ class ItemMagicGun : ItemBow() {
     override fun onUpdate(itemstack: ItemStack, world: World, entity: Entity, metadata: Int, bool: Boolean) {
         if (itemstack.tagCompound == null) {
             itemstack.tagCompound = NBTTagCompound().apply {
-                setString("MagicGunMode", MagicGunMode.LIGHT.name)
+                setString(MAGIC_GUN_MODE, MagicGunMode.LIGHT.name)
             }
         }
     }
@@ -129,7 +126,7 @@ class ItemMagicGun : ItemBow() {
         worldIn.apply {
             if (isLocal()) {
                 val stack = playerIn.getHeldItem(handIn)
-                itemStackShooters.getOrCreate(stack).run {
+                stackShooterOS.getOrCreate(stack).run {
                     runningCoroutineTerminationFlag = false
                     if (runningCoroutine?.isActive == true) {
 //                    runBlocking {
@@ -147,20 +144,20 @@ class ItemMagicGun : ItemBow() {
 
     override fun onPlayerStoppedUsing(stack: ItemStack, worldIn: World, entityLiving: EntityLivingBase, timeLeft: Int) {
         if (worldIn.isLocal()) {
-            itemStackShooters.getOrCreate(stack).runningCoroutineTerminationFlag = true
+            stackShooterOS.getOrCreate(stack).runningCoroutineTerminationFlag = true
         }
     }
 
     override fun onEntitySwing(entityLiving: EntityLivingBase, stack: ItemStack): Boolean {
         if (entityLiving.world.isLocal()) {
-            itemStackShooters.getOrCreate(stack).run {
-                val newMagicGunMode = when (MagicGunMode.valueOf(stack.tagCompound!!.getString("MagicGunMode"))) {
+            stackShooterOS.getOrCreate(stack).run {
+                val newMagicGunMode = when (MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))) {
                     MagicGunMode.LIGHT -> MagicGunMode.HEAVY
                     MagicGunMode.HEAVY -> MagicGunMode.KATYUSHA
                     MagicGunMode.KATYUSHA -> MagicGunMode.MORTAR
                     MagicGunMode.MORTAR -> MagicGunMode.LIGHT
                 }
-                stack.tagCompound?.setString("MagicGunMode", newMagicGunMode.name)
+                stack.tagCompound?.setString(MAGIC_GUN_MODE, newMagicGunMode.name)
                 (entityLiving as? EntityPlayer)?.sendStatusMessage(
                         TextComponentString("Magic Gun Mode: $newMagicGunMode").apply {
                             style.color = TextFormatting.GREEN

@@ -1,37 +1,9 @@
 package com.dedztbh.demagica.util
 
-import java.util.*
-
-
 /**
  * Created by DEDZTBH on 19-2-13.
  * Project DEMagica
  */
-
-class TickOS {
-    private val tickTaskManagersMap = WeakHashMap<Any, TickTaskManager>()
-
-    fun tick() = tickTaskManagersMap.forEach { (key, tickTaskManager) ->
-        if (key != null) {
-            tickTaskManager.tick()
-        }
-    }
-
-    fun create(objRef: Any) = TickTaskManager().also {
-        tickTaskManagersMap[objRef] = it
-    }
-
-    fun get(objRef: Any, createIfNotExist: Boolean = false): TickTaskManager? =
-            tickTaskManagersMap[objRef]
-                    ?: if (createIfNotExist)
-                        create(objRef)
-                    else
-                        null
-
-    fun destroy(objRef: Any): TickTaskManager? =
-            tickTaskManagersMap.remove(objRef)
-}
-
 
 class TickTaskManager {
     private var tasks = mutableListOf<Task>()
