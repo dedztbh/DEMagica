@@ -1,6 +1,7 @@
 package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
+import com.dedztbh.demagica.global.ClientTickOS
 import com.dedztbh.demagica.global.ServerTickOS
 import com.dedztbh.demagica.projectile.MagicBall
 import com.dedztbh.demagica.projectile.MagicBallHeavy
@@ -9,6 +10,7 @@ import com.dedztbh.demagica.projectile.MagicBomb
 import com.dedztbh.demagica.util.DeOS
 import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
+import com.dedztbh.demagica.util.then
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -43,6 +45,7 @@ class ItemMagicGun : ItemBow() {
     }
 
     private val taskManager: TickTaskManager = ServerTickOS.create(this)
+    private val taskManagerClient: TickTaskManager = ClientTickOS.create(this)
     private val stackShooterOS = DeOS { this.StackShooter() }
 
     init {
@@ -61,6 +64,12 @@ class ItemMagicGun : ItemBow() {
 
         fun asyncShootMagicBall(stack: ItemStack, stackShooter: StackShooter, worldIn: World, playerIn: EntityPlayer, handIn: EnumHand, doShoot: Boolean = true): Job {
             return GlobalScope.launch {
+
+                // Check if item is switched
+                (stack.item !is ItemMagicGun) then {
+                    runningCoroutineTerminationFlag = true
+                }
+
                 stackShooter.run {
                     if (runningCoroutineTerminationFlag) {
                         runningCoroutine = null
@@ -68,7 +77,11 @@ class ItemMagicGun : ItemBow() {
                     }
                     if (doShoot) {
                         val magicGunMode = MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))
+                        taskManagerClient.runTask {
+                            playerIn.activeHand = handIn
+                        }
                         firingTask = taskManager.runTask {
+                            playerIn.activeHand = handIn
                             worldIn.apply {
                                 when (magicGunMode) {
                                     MagicGunMode.LIGHT -> {
@@ -124,15 +137,11 @@ class ItemMagicGun : ItemBow() {
 
     override fun onItemRightClick(worldIn: World, playerIn: EntityPlayer, handIn: EnumHand): ActionResult<ItemStack> {
         worldIn.apply {
-            if (isLocal()) {
+            isLocal() then {
                 val stack = playerIn.getHeldItem(handIn)
                 stackShooterOS.getOrCreate(stack).run {
                     runningCoroutineTerminationFlag = false
-                    if (runningCoroutine?.isActive == true) {
-//                    runBlocking {
-//                        runningCoroutine?.cancelAndJoin()
-//                    }
-                    } else {
+                    if (runningCoroutine?.isActive != true) {
                         runningCoroutine = asyncShootMagicBall(stack, this@run, worldIn, playerIn, handIn)
                     }
                 }
@@ -143,14 +152,19 @@ class ItemMagicGun : ItemBow() {
     }
 
     override fun onPlayerStoppedUsing(stack: ItemStack, worldIn: World, entityLiving: EntityLivingBase, timeLeft: Int) {
-        if (worldIn.isLocal()) {
+        worldIn.isLocal() then {
             stackShooterOS.getOrCreate(stack).runningCoroutineTerminationFlag = true
+            entityLiving.heldItemOffhand.apply {
+                (item is ItemMagicGun) then {
+                    stackShooterOS.getOrCreate(this).runningCoroutineTerminationFlag = true
+                }
+            }
         }
     }
 
     override fun onEntitySwing(entityLiving: EntityLivingBase, stack: ItemStack): Boolean {
-        if (entityLiving.world.isLocal()) {
-            stackShooterOS.getOrCreate(stack).run {
+        entityLiving.world.isLocal() then {
+            stackShooterOS.get(stack)?.run {
                 val newMagicGunMode = when (MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))) {
                     MagicGunMode.LIGHT -> MagicGunMode.HEAVY
                     MagicGunMode.HEAVY -> MagicGunMode.KATYUSHA

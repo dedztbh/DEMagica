@@ -28,3 +28,13 @@ val ServerTickOS = object : TickOS() {
     @SubscribeEvent
     fun tick(event: TickEvent.ServerTickEvent) = super.tick()
 }
+
+@JvmField
+val ClientTickOS = object : TickOS() {
+    init {
+        MinecraftForge.EVENT_BUS.register(this)
+    }
+
+    @SubscribeEvent
+    fun tick(event: TickEvent.ClientTickEvent) = super.tick()
+}

@@ -1,5 +1,15 @@
 {
-  "parent": "item/generated",
+  "parent": "item/handheld",
+  "display": {
+    "thirdperson_righthand": {
+      "translation": [0, 1.3, -4.8],
+      "rotation": [-45, -90, 0]
+    },
+    "thirdperson_lefthand": {
+      "translation": [0, 1.3, -4.8],
+      "rotation": [-45, 90, 0]
+    }
+  },
   "textures": {
     "layer0": "demagica:items/magicguntexture"
   }
