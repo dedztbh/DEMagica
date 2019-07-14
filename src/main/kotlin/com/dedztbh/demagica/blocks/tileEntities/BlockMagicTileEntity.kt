@@ -103,6 +103,7 @@ class BlockMagicTileEntity :
             lastInputRate = it
         }
     }
+
     override fun getTankProperties(): Array<IFluidTankProperties> = steamTank.run {
         arrayOf(FluidTankProperties(
                 fluid,
