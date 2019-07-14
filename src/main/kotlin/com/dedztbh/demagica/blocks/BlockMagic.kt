@@ -5,9 +5,12 @@ import com.dedztbh.demagica.blocks.tileEntities.BlockMagicTileEntity
 import com.dedztbh.demagica.global.ModGuiHandler
 import com.dedztbh.demagica.global.ModItems.Companion.tabTutorialMod
 import com.dedztbh.demagica.util.isLocal
+import com.dedztbh.demagica.util.toBool
+import com.dedztbh.demagica.util.toInt
 import net.minecraft.block.Block
 import net.minecraft.block.ITileEntityProvider
 import net.minecraft.block.material.Material
+import net.minecraft.block.properties.PropertyBool
 import net.minecraft.block.properties.PropertyDirection
 import net.minecraft.block.state.BlockStateContainer
 import net.minecraft.block.state.IBlockState
@@ -43,11 +46,19 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
         val FACING = PropertyDirection.create("facing")
 
         @JvmStatic
+        val CONVERTING = PropertyBool.create("converting")
+
+        @JvmStatic
         fun getFacingFromEntity(clickedBlock: BlockPos, entity: EntityLivingBase): EnumFacing {
             return EnumFacing.getFacingFromVector(
                     (entity.posX - clickedBlock.x).toFloat(),
                     (entity.posY - clickedBlock.y).toFloat(),
                     (entity.posZ - clickedBlock.z).toFloat())
+        }
+
+        @JvmStatic
+        fun setState(converting: Boolean, worldIn: World, pos: BlockPos) {
+            worldIn.setBlockState(pos, worldIn.getBlockState(pos).withProperty(CONVERTING, converting), 3)
         }
     }
 
@@ -55,7 +66,9 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
         unlocalizedName = "${DEMagica.MODID}.magic"
         setRegistryName("magic")
         setCreativeTab(tabTutorialMod)
-        defaultState = blockState.baseState.withProperty(FACING, EnumFacing.NORTH)
+        defaultState = blockState.baseState
+                .withProperty(FACING, EnumFacing.NORTH)
+                .withProperty(CONVERTING, false)
     }
 
     @SideOnly(Side.CLIENT)
@@ -64,19 +77,24 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
     }
 
     override fun onBlockPlacedBy(world: World, pos: BlockPos, state: IBlockState, placer: EntityLivingBase, stack: ItemStack) {
-        world.setBlockState(pos, state.withProperty(FACING, getFacingFromEntity(pos, placer)), 2)
+        world.setBlockState(pos, state
+                .withProperty(FACING, getFacingFromEntity(pos, placer))
+                .withProperty(CONVERTING, false), 2)
     }
 
     override fun getStateFromMeta(meta: Int): IBlockState {
-        return defaultState.withProperty(FACING, EnumFacing.getFront(meta and 7))
+        return defaultState
+                .withProperty(FACING, EnumFacing.getFront(meta and 7)) // 3 bit
+                .withProperty(CONVERTING, ((meta and 8) shr 3).toBool())
     }
 
     override fun getMetaFromState(state: IBlockState): Int {
-        return state.getValue(FACING).index
+        return state.getValue(FACING).index + // 3 bit
+                (state.getValue(CONVERTING).toInt() shl 3) // 1 bit
     }
 
     override fun createBlockState(): BlockStateContainer {
-        return BlockStateContainer(this, FACING)
+        return BlockStateContainer(this, FACING, CONVERTING)
     }
 
     fun World.TEAt(pos: BlockPos): BlockMagicTileEntity {

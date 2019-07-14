@@ -44,3 +44,6 @@ fun TileEntity.oppositeBlockPosAndEnumFacings() = pos.run {
 }
 
 infix fun <T> Boolean.then(block: () -> T): T? = if (this) block() else null
+
+fun Boolean.toInt(): Int = if (this) 1 else 0
+fun Int.toBool(): Boolean = this != 0

@@ -3,10 +3,12 @@ package com.dedztbh.demagica.blocks.tileEntities
 import cofh.redstoneflux.api.IEnergyProvider
 import cofh.redstoneflux.api.IEnergyReceiver
 import cofh.redstoneflux.impl.EnergyStorage
+import com.dedztbh.demagica.blocks.BlockMagic
 import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
 import com.dedztbh.demagica.util.oppositeBlockPosAndEnumFacings
 import com.dedztbh.demagica.util.then
+import net.minecraft.block.state.IBlockState
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.network.NetworkManager
@@ -14,6 +16,8 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.ITickable
+import net.minecraft.util.math.BlockPos
+import net.minecraft.world.World
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.energy.CapabilityEnergy
 import net.minecraftforge.fluids.FluidStack
@@ -41,6 +45,7 @@ class BlockMagicTileEntity :
         cofh.redstoneflux.api.IEnergyStorage,
         net.minecraftforge.energy.IEnergyStorage,
         ITickable {
+
     companion object {
         val CAPABILITIES = setOf<Capability<*>>(
                 CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
@@ -101,6 +106,7 @@ class BlockMagicTileEntity :
     override fun fill(resource: FluidStack, doFill: Boolean): Int = steamTank.fill(resource, doFill).also {
         doFill then {
             lastInputRate = it
+            inputRateUpdated = true
         }
     }
 
@@ -127,6 +133,7 @@ class BlockMagicTileEntity :
     fun getInfo(): String = "Steam: ${steamTank.fluidAmount}mB, Energy: ${battery.energyStored}RF"
 
     private var dirtyFlag = false
+    private var inputRateUpdated = false
 
     var lastInputRate = 0
     var lastConvertRate = 0.0
@@ -141,8 +148,14 @@ class BlockMagicTileEntity :
                 battery.receiveEnergy(RF_GENERATED, false)
                 dirtyFlag = true
                 RF_GENERATED.toDouble() / CONVERT_TICKS
+
             } else {
                 0.0
+            }.also {
+                if (lastConvertRate == 0.0 && it > 0 || lastConvertRate > 0 && it == 0.0) {
+                    BlockMagic.setState(it > 0.0, world, pos)
+                    dirtyFlag = true
+                }
             }
         }
 
@@ -167,6 +180,10 @@ class BlockMagicTileEntity :
     override fun update() {
         if (world.isLocal()) {
             taskManager.tick()
+            if (!inputRateUpdated) {
+                lastInputRate = 0
+            }
+            inputRateUpdated = false
             if (dirtyFlag) {
                 markDirty()
                 dirtyFlag = false
@@ -203,5 +220,9 @@ class BlockMagicTileEntity :
     override fun onDataPacket(net: NetworkManager, pkt: SPacketUpdateTileEntity) {
         super.onDataPacket(net, pkt)
         readFromNBT(pkt.nbtCompound)
+    }
+
+    override fun shouldRefresh(world: World, pos: BlockPos, oldState: IBlockState, newSate: IBlockState): Boolean {
+        return oldState.block !is BlockMagic || newSate.block !is BlockMagic
     }
 }
