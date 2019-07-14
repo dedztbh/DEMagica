@@ -6,6 +6,7 @@ import cofh.redstoneflux.impl.EnergyStorage
 import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
 import com.dedztbh.demagica.util.oppositeBlockPosAndEnumFacings
+import com.dedztbh.demagica.util.then
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.network.NetworkManager
@@ -97,7 +98,11 @@ class BlockMagicTileEntity :
     fun fluidAmount() = steamTank.fluidAmount
     override fun drain(resource: FluidStack, doDrain: Boolean): FluidStack? = null
     override fun drain(maxDrain: Int, doDrain: Boolean): FluidStack? = null
-    override fun fill(resource: FluidStack, doFill: Boolean): Int = steamTank.fill(resource, doFill)
+    override fun fill(resource: FluidStack, doFill: Boolean): Int = steamTank.fill(resource, doFill).also {
+        doFill then {
+            lastInputRate = it
+        }
+    }
     override fun getTankProperties(): Array<IFluidTankProperties> = steamTank.run {
         arrayOf(FluidTankProperties(
                 fluid,
@@ -121,15 +126,22 @@ class BlockMagicTileEntity :
     fun getInfo(): String = "Steam: ${steamTank.fluidAmount}mB, Energy: ${battery.energyStored}RF"
 
     private var dirtyFlag = false
+
+    var lastInputRate = 0
+    var lastConvertRate = 0.0
+    var lastOutputRate = 0
+
     private val taskManager = TickTaskManager().apply {
         runTask(CONVERT_TICKS.toLong(), repeat = true, startNow = true, isEvery = true) {
-            if (steamTank.drain(MB_CONSUMED, false)?.amount == MB_CONSUMED
+            lastConvertRate = if (steamTank.drain(MB_CONSUMED, false)?.amount == MB_CONSUMED
                     && battery.receiveEnergy(RF_GENERATED, true) == RF_GENERATED) {
                 //have enough steam and tank has enough space, can convert
                 steamTank.drain(MB_CONSUMED, true)
                 battery.receiveEnergy(RF_GENERATED, false)
-
                 dirtyFlag = true
+                RF_GENERATED.toDouble() / CONVERT_TICKS
+            } else {
+                0.0
             }
         }
 
@@ -139,6 +151,7 @@ class BlockMagicTileEntity :
                 if (targetTE is IEnergyReceiver && targetTE.canConnectEnergy(facing)) {
                     targetTE.receiveEnergy(facing, battery.extractEnergy(battery.maxExtract, true), true)
                             .let { maxRFCanSent ->
+                                lastOutputRate = maxRFCanSent
                                 if (maxRFCanSent > 0) {
                                     battery.extractEnergy(maxRFCanSent, false)
                                     targetTE.receiveEnergy(facing, maxRFCanSent, false)
@@ -166,6 +179,9 @@ class BlockMagicTileEntity :
             steamTank.readFromNBT(getCompoundTag("SteamTank"))
             battery.readFromNBT(getCompoundTag("Battery"))
             storage.deserializeNBT(getCompoundTag("Storage"))
+            lastConvertRate = getDouble("LastConvertRate")
+            lastOutputRate = getInteger("LastOutputRate")
+            lastInputRate = getInteger("LastInputRate")
         }
     }
 
@@ -175,6 +191,9 @@ class BlockMagicTileEntity :
                 setTag("SteamTank", steamTank.writeToNBT(NBTTagCompound()))
                 setTag("Battery", battery.writeToNBT(NBTTagCompound()))
                 setTag("Storage", storage.serializeNBT())
+                setDouble("LastConvertRate", lastConvertRate)
+                setInteger("LastOutputRate", lastOutputRate)
+                setInteger("LastInputRate", lastInputRate)
             }
 
     override fun getUpdatePacket(): SPacketUpdateTileEntity =

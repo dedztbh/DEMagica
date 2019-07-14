@@ -118,8 +118,12 @@ class BlockMagicGui(container: Container, private val playerInv: InventoryPlayer
             I18n.format(ModBlocks.blockMagic.unlocalizedName + ".name").let {
                 drawString(it, xSize / 2 - fontRenderer.getStringWidth(it) / 2, 6, 0x404040)
             }
-            "${magicTE.fluidAmount()}mB -> ${magicTE.energyStored}RF".let {
-                drawString(it, xSize / 2 - fontRenderer.getStringWidth(it) / 2, 18, 0x404040)
+            "${magicTE.lastInputRate}mB/t -${if (magicTE.lastInputRate > 0) ">" else "-"} ${magicTE.fluidAmount()}mB -${if (magicTE.lastConvertRate > 0) ">" else "-"} ${magicTE.energyStored}RF -${if (magicTE.lastOutputRate > 0) ">" else "-"} ${magicTE.lastOutputRate}RF/t"
+                    .let {
+                        drawString(it, xSize / 2 - fontRenderer.getStringWidth(it) / 2, 18, 0x404040)
+                    }
+            "Generate: ${magicTE.lastConvertRate}RF/t".let {
+                drawString(it, xSize / 2 - fontRenderer.getStringWidth(it) / 2, 60, 0x404040)
             }
             drawString(playerInv.displayName.unformattedText, 8, ySize - 94, 0x404040)
         }
