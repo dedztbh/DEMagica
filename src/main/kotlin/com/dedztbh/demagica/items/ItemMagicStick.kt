@@ -32,7 +32,7 @@ class ItemMagicStick : Item() {
 
     init {
         setRegistryName("magicstick")
-        unlocalizedName = DEMagica.MODID + ".magicstick"
+        unlocalizedName = "${DEMagica.MODID}.magicstick"
 
         creativeTab = ModItems.tabTutorialMod
 

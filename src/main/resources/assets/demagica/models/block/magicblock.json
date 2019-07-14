@@ -6,7 +6,7 @@
     "up": "demagica:blocks/magic2",
     "east": "demagica:blocks/magic2",
     "west": "demagica:blocks/magic2",
-    "north": "demagica:blocks/magic",
+    "north": "#front",
     "south": "demagica:blocks/magic2"
   }
 }

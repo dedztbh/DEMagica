@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
 class ModBlocks {
     companion object {
         @JvmStatic
-        @GameRegistry.ObjectHolder("demagica:magic")
+        @GameRegistry.ObjectHolder("demagica:magicblock")
         lateinit var blockMagic: BlockMagic
 
         @SideOnly(Side.CLIENT)

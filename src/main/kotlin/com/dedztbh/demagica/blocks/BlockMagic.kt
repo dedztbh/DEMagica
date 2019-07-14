@@ -5,8 +5,6 @@ import com.dedztbh.demagica.blocks.tileEntities.BlockMagicTileEntity
 import com.dedztbh.demagica.global.ModGuiHandler
 import com.dedztbh.demagica.global.ModItems.Companion.tabTutorialMod
 import com.dedztbh.demagica.util.isLocal
-import com.dedztbh.demagica.util.toBool
-import com.dedztbh.demagica.util.toInt
 import net.minecraft.block.Block
 import net.minecraft.block.ITileEntityProvider
 import net.minecraft.block.material.Material
@@ -20,12 +18,12 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.BlockRenderLayer
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.text.TextComponentString
 import net.minecraft.util.text.TextFormatting
+import net.minecraft.world.IBlockAccess
 import net.minecraft.world.World
 import net.minecraftforge.client.model.ModelLoader
 import net.minecraftforge.fml.relauncher.Side
@@ -33,6 +31,13 @@ import net.minecraftforge.fml.relauncher.SideOnly
 
 
 class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
+    init {
+        unlocalizedName = "${DEMagica.MODID}.magicblock"
+        setRegistryName("magicblock")
+        setCreativeTab(tabTutorialMod)
+        defaultState = blockState.baseState.withProperty(FACING, EnumFacing.NORTH)
+    }
+
     override fun hasTileEntity(state: IBlockState): Boolean {
         return true
     }
@@ -42,10 +47,10 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
     }
 
     companion object {
-        @JvmStatic
+        @JvmField
         val FACING = PropertyDirection.create("facing")
 
-        @JvmStatic
+        @JvmField
         val CONVERTING = PropertyBool.create("converting")
 
         @JvmStatic
@@ -58,39 +63,31 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
 
         @JvmStatic
         fun setState(converting: Boolean, worldIn: World, pos: BlockPos) {
-            worldIn.setBlockState(pos, worldIn.getBlockState(pos).withProperty(CONVERTING, converting), 3)
+            worldIn.getBlockState(pos).apply {
+                worldIn.setBlockState(pos, withProperty(CONVERTING, converting), 3)
+            }
         }
     }
 
-    init {
-        unlocalizedName = "${DEMagica.MODID}.magic"
-        setRegistryName("magic")
-        setCreativeTab(tabTutorialMod)
-        defaultState = blockState.baseState
-                .withProperty(FACING, EnumFacing.NORTH)
-                .withProperty(CONVERTING, false)
-    }
-
-    @SideOnly(Side.CLIENT)
-    override fun getBlockLayer(): BlockRenderLayer {
-        return BlockRenderLayer.SOLID
-    }
+//    @SideOnly(Side.CLIENT)
+//    override fun getBlockLayer(): BlockRenderLayer {
+//        return BlockRenderLayer.SOLID
+//    }
 
     override fun onBlockPlacedBy(world: World, pos: BlockPos, state: IBlockState, placer: EntityLivingBase, stack: ItemStack) {
         world.setBlockState(pos, state
-                .withProperty(FACING, getFacingFromEntity(pos, placer))
-                .withProperty(CONVERTING, false), 2)
+                .withProperty(FACING, getFacingFromEntity(pos, placer)), 2)
     }
 
     override fun getStateFromMeta(meta: Int): IBlockState {
         return defaultState
                 .withProperty(FACING, EnumFacing.getFront(meta and 7)) // 3 bit
-                .withProperty(CONVERTING, ((meta and 8) shr 3).toBool())
+                .withProperty(CONVERTING, (meta and 8) != 0)
     }
 
     override fun getMetaFromState(state: IBlockState): Int {
         return state.getValue(FACING).index + // 3 bit
-                (state.getValue(CONVERTING).toInt() shl 3) // 1 bit
+                (if (state.getValue(CONVERTING)) 8 else 0) // 1 bit
     }
 
     override fun createBlockState(): BlockStateContainer {
@@ -132,5 +129,9 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
     @SideOnly(Side.CLIENT)
     fun initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, ModelResourceLocation(registryName!!, "inventory"))
+    }
+
+    override fun getLightValue(state: IBlockState, world: IBlockAccess, pos: BlockPos): Int {
+        return if (state.getValue(CONVERTING)) 15 else 0
     }
 }

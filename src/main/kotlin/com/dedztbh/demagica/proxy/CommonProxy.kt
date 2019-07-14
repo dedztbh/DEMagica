@@ -36,7 +36,7 @@ open class CommonProxy {
         @SubscribeEvent
         fun registerBlocks(event: RegistryEvent.Register<Block>) {
             event.registry.register(BlockMagic())
-            GameRegistry.registerTileEntity(BlockMagicTileEntity::class.java, "${DEMagica.MODID}_magic")
+            GameRegistry.registerTileEntity(BlockMagicTileEntity::class.java, "${DEMagica.MODID}:magicblock")
         }
 
         @JvmStatic

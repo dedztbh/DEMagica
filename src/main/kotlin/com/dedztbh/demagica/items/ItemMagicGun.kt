@@ -50,7 +50,7 @@ class ItemMagicGun : ItemBow() {
 
     init {
         setRegistryName("magicgun")
-        unlocalizedName = DEMagica.MODID + ".magicgun"
+        unlocalizedName = "${DEMagica.MODID}.magicgun"
 
         maxDamage = 0
         creativeTab = tabTutorialMod
