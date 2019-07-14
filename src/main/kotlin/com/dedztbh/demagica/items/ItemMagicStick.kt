@@ -1,11 +1,11 @@
 package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
+import com.dedztbh.demagica.global.ModItems
 import com.dedztbh.demagica.global.ServerTickOS
 import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
 import net.minecraft.client.renderer.block.model.ModelResourceLocation
-import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.SoundEvents
@@ -34,7 +34,7 @@ class ItemMagicStick : Item() {
         setRegistryName("magicstick")
         unlocalizedName = DEMagica.MODID + ".magicstick"
 
-        creativeTab = CreativeTabs.TOOLS
+        creativeTab = ModItems.tabTutorialMod
 
         taskManager = ServerTickOS.create(this)
     }

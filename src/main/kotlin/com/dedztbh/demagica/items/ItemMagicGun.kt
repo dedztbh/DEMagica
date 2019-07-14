@@ -2,6 +2,7 @@ package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.global.ClientTickOS
+import com.dedztbh.demagica.global.ModItems.Companion.tabTutorialMod
 import com.dedztbh.demagica.global.ServerTickOS
 import com.dedztbh.demagica.projectile.MagicBall
 import com.dedztbh.demagica.projectile.MagicBallHeavy
@@ -53,7 +54,7 @@ class ItemMagicGun : ItemBow() {
         unlocalizedName = DEMagica.MODID + ".magicgun"
 
         maxDamage = 0
-        creativeTab = CreativeTabs.COMBAT
+        creativeTab = tabTutorialMod
         maxStackSize = 1
     }
 

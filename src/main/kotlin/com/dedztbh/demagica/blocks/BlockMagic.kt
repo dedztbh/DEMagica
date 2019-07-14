@@ -3,6 +3,7 @@ package com.dedztbh.demagica.blocks
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.blocks.tileEntities.BlockMagicTileEntity
 import com.dedztbh.demagica.global.ModGuiHandler
+import com.dedztbh.demagica.global.ModItems.Companion.tabTutorialMod
 import com.dedztbh.demagica.util.isLocal
 import net.minecraft.block.Block
 import net.minecraft.block.ITileEntityProvider
@@ -54,7 +55,7 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
     init {
         unlocalizedName = "${DEMagica.MODID}.magic"
         setRegistryName("magic")
-        setCreativeTab(CreativeTabs.BUILDING_BLOCKS)
+        setCreativeTab(tabTutorialMod)
         defaultState = blockState.baseState.withProperty(FACING, EnumFacing.NORTH)
     }
 

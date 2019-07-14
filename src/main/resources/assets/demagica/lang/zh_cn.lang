@@ -4,3 +4,6 @@ item.demagica.magicstick.name=DEMagic™ 加压蒸汽注入棒
 
 # blocks
 tile.demagica.magic.name=DEMagic™ 气态氧化氢重聚变反应堆
+
+# creative tabs
+itemGroup.tabDEMagica=DEMagic™ 物品
