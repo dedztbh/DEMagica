@@ -8,6 +8,8 @@ import com.dedztbh.demagica.util.isLocal
 import com.dedztbh.demagica.util.oppositeBlockPosAndEnumFacings
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.network.NetworkManager
+import net.minecraft.network.play.server.SPacketUpdateTileEntity
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.ITickable
@@ -70,8 +72,8 @@ class BlockMagicTileEntity :
     private val steamTank = object : FluidTank(TANK_MB_CAPACITY) {
         override fun canFillFluidType(fluid: FluidStack): Boolean = fluid.fluid.name == "steam"
     }
-    private val battery = object : EnergyStorage(BATTERY_RF_CAPACITY) {}
-    private val storage = object : ItemStackHandler(STORAGE_SIZE) {}
+    private val battery = EnergyStorage(BATTERY_RF_CAPACITY)
+    private val storage = ItemStackHandler(STORAGE_SIZE)
 
     //IEnergyProvider
 
@@ -91,6 +93,8 @@ class BlockMagicTileEntity :
 
     //IFluidHandler
 
+    fun fluidCapacity() = steamTank.capacity
+    fun fluidAmount() = steamTank.fluidAmount
     override fun drain(resource: FluidStack, doDrain: Boolean): FluidStack? = null
     override fun drain(maxDrain: Int, doDrain: Boolean): FluidStack? = null
     override fun fill(resource: FluidStack, doFill: Boolean): Int = steamTank.fill(resource, doFill)
@@ -102,6 +106,7 @@ class BlockMagicTileEntity :
                 canDrain()
         ))
     }
+
 
     //IItemHandlerModifiable
 
@@ -171,4 +176,12 @@ class BlockMagicTileEntity :
                 setTag("Battery", battery.writeToNBT(NBTTagCompound()))
                 setTag("Storage", storage.serializeNBT())
             }
+
+    override fun getUpdatePacket(): SPacketUpdateTileEntity =
+            SPacketUpdateTileEntity(getPos(), 1, writeToNBT(NBTTagCompound()))
+
+    override fun onDataPacket(net: NetworkManager, pkt: SPacketUpdateTileEntity) {
+        super.onDataPacket(net, pkt)
+        readFromNBT(pkt.nbtCompound)
+    }
 }

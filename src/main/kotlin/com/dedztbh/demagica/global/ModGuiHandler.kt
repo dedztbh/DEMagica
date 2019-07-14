@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler
  * Project DEMagica
  */
 
-class DEMagicaGuiHandler : IGuiHandler {
+class ModGuiHandler : IGuiHandler {
 
     companion object {
         const val MAGIC = 0

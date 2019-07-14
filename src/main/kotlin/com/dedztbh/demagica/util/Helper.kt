@@ -2,7 +2,6 @@ package com.dedztbh.demagica.util
 
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.EnumFacing
-import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import java.lang.ref.WeakReference
@@ -43,3 +42,5 @@ fun TileEntity.oppositeBlockPosAndEnumFacings() = pos.run {
             P(south(), EnumFacing.NORTH),
             P(north(), EnumFacing.SOUTH))
 }
+
+infix fun <T> Boolean.then(block: () -> T): T? = if (this) block() else null

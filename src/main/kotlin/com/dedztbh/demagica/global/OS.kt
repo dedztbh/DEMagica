@@ -11,16 +11,20 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
  * Project DEMagica
  */
 
+open class TickOS : DeOS<TickTaskManager>({ TickTaskManager() }) {
+    fun tick() = processMap.forEach { (key, tickTaskManager) ->
+        if (key != null) {
+            tickTaskManager.tick()
+        }
+    }
+}
+
 @JvmField
-val ServerTickOS = object : DeOS<TickTaskManager>({ TickTaskManager() }) {
+val ServerTickOS = object : TickOS() {
     init {
         MinecraftForge.EVENT_BUS.register(this)
     }
 
     @SubscribeEvent
-    fun tick(event: TickEvent.ServerTickEvent) = processMap.forEach { (key, tickTaskManager) ->
-        if (key != null) {
-            tickTaskManager.tick()
-        }
-    }
+    fun tick(event: TickEvent.ServerTickEvent) = super.tick()
 }

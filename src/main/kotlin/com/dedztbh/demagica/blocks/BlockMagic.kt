@@ -2,7 +2,7 @@ package com.dedztbh.demagica.blocks
 
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.blocks.tileEntities.BlockMagicTileEntity
-import com.dedztbh.demagica.global.DEMagicaGuiHandler
+import com.dedztbh.demagica.global.ModGuiHandler
 import com.dedztbh.demagica.util.isLocal
 import net.minecraft.block.Block
 import net.minecraft.block.ITileEntityProvider
@@ -102,8 +102,8 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
                         }
                     }
                 } else {
-                    pos.apply {
-                        openGui(DEMagica.instance, DEMagicaGuiHandler.MAGIC, world, x, y, z)
+                    pos.run {
+                        openGui(DEMagica.instance, ModGuiHandler.MAGIC, world, x, y, z)
                     }
                 }
             }
@@ -115,6 +115,4 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
     fun initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, ModelResourceLocation(registryName!!, "inventory"))
     }
-
-
 }

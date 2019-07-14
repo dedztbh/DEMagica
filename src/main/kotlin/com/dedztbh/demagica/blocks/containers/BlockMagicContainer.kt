@@ -3,6 +3,8 @@ package com.dedztbh.demagica.blocks.containers
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.blocks.tileEntities.BlockMagicTileEntity
 import com.dedztbh.demagica.global.ModBlocks
+import com.dedztbh.demagica.util.isLocal
+import com.dedztbh.demagica.util.then
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.resources.I18n
@@ -13,9 +15,11 @@ import net.minecraft.inventory.Slot
 import net.minecraft.item.ItemStack
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.ResourceLocation
+import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.common.gameevent.TickEvent
 import net.minecraftforge.items.CapabilityItemHandler
 import net.minecraftforge.items.SlotItemHandler
-
 
 /**
  * Created by DEDZTBH on 19-7-14.
@@ -78,16 +82,47 @@ class BlockMagicContainer(playerInv: InventoryPlayer, val magicTE: BlockMagicTil
     }
 }
 
-class BlockMagicGui(private val container: Container, private val playerInv: InventoryPlayer) : GuiContainer(container) {
+class BlockMagicGui(container: Container, private val playerInv: InventoryPlayer) : GuiContainer(container) {
+
+    private val magicTE: BlockMagicTileEntity = (container as BlockMagicContainer).magicTE
+
+    override fun initGui() {
+        super.initGui()
+        MinecraftForge.EVENT_BUS.register(this)
+    }
+
+    override fun onGuiClosed() {
+        super.onGuiClosed()
+        MinecraftForge.EVENT_BUS.unregister(this)
+    }
+
+    @SubscribeEvent
+    fun onWorldTick(event: TickEvent.WorldTickEvent) {
+        event.world.apply {
+            isLocal() then {
+                magicTE.apply {
+                    getBlockState(pos).run {
+                        notifyBlockUpdate(pos, this, this, 3)
+                    }
+                }
+            }
+        }
+    }
+
     companion object {
         private val BG_TEXTURE = ResourceLocation(DEMagica.MODID, "textures/gui/pedestal.png")
     }
 
     override fun drawGuiContainerForegroundLayer(mouseX: Int, mouseY: Int) {
-//        val name = I18n.format(ModBlocks.blockMagic.unlocalizedName + ".name")
-        val name = (container as BlockMagicContainer).magicTE.getInfo()
-        fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 6, 0x404040)
-        fontRenderer.drawString(playerInv.displayName.unformattedText, 8, ySize - 94, 0x404040)
+        fontRenderer.apply {
+            I18n.format(ModBlocks.blockMagic.unlocalizedName + ".name").let {
+                drawString(it, xSize / 2 - fontRenderer.getStringWidth(it) / 2, 6, 0x404040)
+            }
+            "${magicTE.fluidAmount()}mB -> ${magicTE.energyStored}RF".let {
+                drawString(it, xSize / 2 - fontRenderer.getStringWidth(it) / 2, 18, 0x404040)
+            }
+            drawString(playerInv.displayName.unformattedText, 8, ySize - 94, 0x404040)
+        }
     }
 
     override fun drawGuiContainerBackgroundLayer(partialTicks: Float, mouseX: Int, mouseY: Int) {

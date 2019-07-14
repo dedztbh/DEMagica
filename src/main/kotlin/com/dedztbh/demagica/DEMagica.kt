@@ -1,7 +1,7 @@
 package com.dedztbh.demagica
 
 import com.dedztbh.demagica.global.Config
-import com.dedztbh.demagica.global.DEMagicaGuiHandler
+import com.dedztbh.demagica.global.ModGuiHandler
 import com.dedztbh.demagica.proxy.CommonProxy
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.SidedProxy
@@ -37,7 +37,7 @@ class DEMagica {
         proxy.preInit(event)
 
         //Register gui handler
-        NetworkRegistry.INSTANCE.registerGuiHandler(this, DEMagicaGuiHandler())
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, ModGuiHandler())
     }
 
     @Mod.EventHandler
