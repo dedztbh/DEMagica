@@ -2,6 +2,7 @@ package com.dedztbh.demagica.blocks
 
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.blocks.tileEntities.BlockMagicTileEntity
+import com.dedztbh.demagica.global.DEMagicaGuiHandler
 import com.dedztbh.demagica.util.isLocal
 import net.minecraft.block.Block
 import net.minecraft.block.ITileEntityProvider
@@ -9,8 +10,6 @@ import net.minecraft.block.material.Material
 import net.minecraft.block.properties.PropertyDirection
 import net.minecraft.block.state.BlockStateContainer
 import net.minecraft.block.state.IBlockState
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.block.model.ModelResourceLocation
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.EntityLivingBase
@@ -80,8 +79,8 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
         return BlockStateContainer(this, FACING)
     }
 
-    private fun getTE(world: World, pos: BlockPos): BlockMagicTileEntity {
-        return world.getTileEntity(pos) as BlockMagicTileEntity
+    fun World.TEAt(pos: BlockPos): BlockMagicTileEntity {
+        return getTileEntity(pos) as BlockMagicTileEntity
     }
 
     override fun onBlockActivated(worldIn: World,
@@ -94,26 +93,17 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
                                   hitY: Float,
                                   hitZ: Float): Boolean {
         if (worldIn.isLocal()) {
-            if (side == state.getValue(FACING)) {
-                val component = TextComponentString(getTE(worldIn, pos).getInfo()).apply {
-                    style.color = TextFormatting.GREEN
-                }
-                playerIn.sendStatusMessage(component, false)
-            }
-
-            object : GuiScreen() {
-                override fun doesGuiPauseGame(): Boolean {
-                    return false
-                }
-
-                override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-                    fontRenderer.drawString(getTE(worldIn, pos).getInfo(), 100, 100, 0xFFFFFF)
-                    super.drawScreen(mouseX, mouseY, partialTicks)
-                }
-            }.run {
-                Minecraft.getMinecraft().apply {
-                    addScheduledTask {
-                        displayGuiScreen(this@run)
+            playerIn.apply {
+                if (isSneaking) {
+                    if (side == state.getValue(FACING)) {
+                        TextComponentString(worldIn.TEAt(pos).getInfo()).apply {
+                            style.color = TextFormatting.GREEN
+                            sendStatusMessage(this, false)
+                        }
+                    }
+                } else {
+                    pos.apply {
+                        openGui(DEMagica.instance, DEMagicaGuiHandler.MAGIC, world, x, y, z)
                     }
                 }
             }
@@ -125,4 +115,6 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
     fun initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, ModelResourceLocation(registryName!!, "inventory"))
     }
+
+
 }

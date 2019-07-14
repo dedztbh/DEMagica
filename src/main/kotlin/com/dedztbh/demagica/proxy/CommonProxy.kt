@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry
 import net.minecraftforge.fml.common.registry.GameRegistry
 import java.io.File
 
+
 @Mod.EventBusSubscriber
 open class CommonProxy {
     companion object {

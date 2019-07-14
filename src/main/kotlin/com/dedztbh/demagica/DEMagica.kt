@@ -1,12 +1,14 @@
 package com.dedztbh.demagica
 
 import com.dedztbh.demagica.global.Config
+import com.dedztbh.demagica.global.DEMagicaGuiHandler
 import com.dedztbh.demagica.proxy.CommonProxy
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.SidedProxy
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
+import net.minecraftforge.fml.common.network.NetworkRegistry
 import org.apache.logging.log4j.Logger
 
 
@@ -33,6 +35,9 @@ class DEMagica {
     fun preInit(event: FMLPreInitializationEvent) {
         logger = event.modLog
         proxy.preInit(event)
+
+        //Register gui handler
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, DEMagicaGuiHandler())
     }
 
     @Mod.EventHandler
