@@ -1,5 +1,6 @@
 package com.dedztbh.demagica.projectile
 
+import com.dedztbh.demagica.util.Open
 import com.dedztbh.demagica.util.isLocal
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
@@ -20,7 +21,8 @@ import kotlin.random.Random
  * Project DEMagica
  */
 
-open class MagicBall : EntityArrow, IThrowableEntity {
+@Open
+class MagicBall : EntityArrow, IThrowableEntity {
 
     constructor (worldIn: World) : super(worldIn)
 
@@ -30,15 +32,15 @@ open class MagicBall : EntityArrow, IThrowableEntity {
         damage = 10.0
     }
 
-    open val gravity = 0.02
-    open val sound: SoundEvent = SoundEvents.ENTITY_FIREWORK_BLAST
+    val gravity = 0.02
+    val sound: SoundEvent = SoundEvents.ENTITY_FIREWORK_BLAST
 
     override fun onUpdate() {
         super.onUpdate()
         motionY -= (gravity - 0.05000000074505806)
     }
 
-    private fun playShootingSound() {
+    fun playShootingSound() {
         world.playSound(thrower as EntityPlayer?, posX, posY, posZ, sound, SoundCategory.PLAYERS, 16f, Random.nextFloat())
     }
 
@@ -49,7 +51,7 @@ open class MagicBall : EntityArrow, IThrowableEntity {
     }
 
     override fun onHit(raytraceResultIn: RayTraceResult) {
-        if (world.isLocal()) {
+        if (world.isLocal) {
             raytraceResultIn.entityHit?.apply {
                 attackEntityFrom(DamageSource.causeArrowDamage(this@MagicBall, thrower), damage.toFloat())
             }
@@ -61,6 +63,7 @@ open class MagicBall : EntityArrow, IThrowableEntity {
         return ItemStack.EMPTY
     }
 
+    // TODO: the way sound is played is pretty magic I think. Maybe find a better way.
     override fun setThrower(entity: Entity?) {
         shootingEntity = entity
         if (shootingEntity != null && !isDead && getDistance(shootingEntity) <= 5) {

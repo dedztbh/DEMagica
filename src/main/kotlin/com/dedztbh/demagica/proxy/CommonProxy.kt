@@ -1,13 +1,12 @@
 package com.dedztbh.demagica.proxy
 
 import com.dedztbh.demagica.DEMagica
-import com.dedztbh.demagica.blocks.BlockMagic
-import com.dedztbh.demagica.blocks.tileEntities.BlockMagicTileEntity
 import com.dedztbh.demagica.global.Config
+import com.dedztbh.demagica.global.DEMagicaBlock
 import com.dedztbh.demagica.global.ModBlocks
-import com.dedztbh.demagica.items.ItemMagicGun
-import com.dedztbh.demagica.items.ItemMagicStick
+import com.dedztbh.demagica.global.ModItems
 import com.dedztbh.demagica.projectile.*
+import com.dedztbh.demagica.util.then
 import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.item.ItemBlock
@@ -35,17 +34,24 @@ open class CommonProxy {
         @JvmStatic
         @SubscribeEvent
         fun registerBlocks(event: RegistryEvent.Register<Block>) {
-            event.registry.register(BlockMagic())
-            GameRegistry.registerTileEntity(BlockMagicTileEntity::class.java, "${DEMagica.MODID}:magicblock")
+            ModBlocks.stuffOf(Block::class.java, DEMagicaBlock::class.java, newInstance = true).forEach {
+                event.registry.register(it)
+                it.hasTileEntity(it.defaultState) then {
+                    it as DEMagicaBlock
+                    GameRegistry.registerTileEntity(it.getTEClass(), ResourceLocation("${DEMagica.MODID}:${it.registryName}"))
+                }
+            }
         }
 
         @JvmStatic
         @SubscribeEvent
         fun registerItems(event: RegistryEvent.Register<Item>) {
-            event.registry.apply {
-                register(ItemMagicStick())
-                register(ItemBlock(ModBlocks.blockMagic).setRegistryName(ModBlocks.blockMagic.registryName))
-                register(ItemMagicGun())
+            ModItems.stuffOf(Item::class.java, newInstance = true).forEach {
+                event.registry.register(it)
+            }
+
+            ModBlocks.stuffOf(Block::class.java).forEach {
+                event.registry.register(ItemBlock(it).setRegistryName(ModBlocks.blockMagic.registryName))
             }
         }
     }

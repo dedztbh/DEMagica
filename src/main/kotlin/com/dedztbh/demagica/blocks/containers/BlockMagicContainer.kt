@@ -99,7 +99,7 @@ class BlockMagicGui(container: Container, private val playerInv: InventoryPlayer
     @SubscribeEvent
     fun onWorldTick(event: TickEvent.WorldTickEvent) {
         event.world.apply {
-            isLocal() then {
+            isLocal then {
                 magicTE.apply {
                     getBlockState(pos).run {
                         notifyBlockUpdate(pos, this, this, 3)

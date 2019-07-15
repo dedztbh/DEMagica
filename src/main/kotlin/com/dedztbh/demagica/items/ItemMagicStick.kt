@@ -1,6 +1,7 @@
 package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
+import com.dedztbh.demagica.global.DEMagicaStuff
 import com.dedztbh.demagica.global.ModItems
 import com.dedztbh.demagica.global.ServerTickOS
 import com.dedztbh.demagica.util.TickTaskManager
@@ -26,7 +27,7 @@ import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
 
-class ItemMagicStick : Item() {
+class ItemMagicStick : Item(), DEMagicaStuff {
 
     private val taskManager: TickTaskManager
 
@@ -34,18 +35,18 @@ class ItemMagicStick : Item() {
         setRegistryName("magicstick")
         unlocalizedName = "${DEMagica.MODID}.magicstick"
 
-        creativeTab = ModItems.tabTutorialMod
+        creativeTab = ModItems.tabDEMagica
 
         taskManager = ServerTickOS.create(this)
     }
 
     @SideOnly(Side.CLIENT)
-    fun initModel() {
+    override fun initModel() {
         ModelLoader.setCustomModelResourceLocation(this, 0, ModelResourceLocation(registryName!!, "inventory"))
     }
 
     override fun onItemUse(player: EntityPlayer, worldIn: World, pos: BlockPos, hand: EnumHand, facing: EnumFacing, hitX: Float, hitY: Float, hitZ: Float): EnumActionResult {
-        if (worldIn.isLocal()) {
+        if (worldIn.isLocal) {
             val entity = worldIn.getTileEntity(pos)
             CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.let { fluidCapability ->
                 entity?.hasCapability(fluidCapability, null)?.let {
@@ -67,7 +68,7 @@ class ItemMagicStick : Item() {
     }
 
     override fun onLeftClickEntity(stack: ItemStack, player: EntityPlayer, entity: Entity): Boolean {
-        if (entity.world.isLocal()) {
+        if (entity.world.isLocal) {
             player.lookVec.apply {
                 val pow = 20
                 entity.addVelocity(x * pow, y * pow, z * pow)

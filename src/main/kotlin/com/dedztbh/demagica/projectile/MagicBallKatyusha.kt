@@ -23,7 +23,7 @@ open class MagicBallKatyusha : MagicBall {
     override val sound: SoundEvent = SoundEvents.ENTITY_FIREWORK_LAUNCH
 
     override fun onHit(raytraceResultIn: RayTraceResult) {
-        if (world.isLocal()) {
+        if (world.isLocal) {
             world.newExplosion(this, posX, posY, posZ, 3f, true, true)
             setDead()
         }

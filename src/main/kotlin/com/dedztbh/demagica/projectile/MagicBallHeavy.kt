@@ -25,7 +25,7 @@ open class MagicBallHeavy : MagicBall {
 
     override fun onHit(raytraceResultIn: RayTraceResult) {
         super.onHit(raytraceResultIn)
-        if (world.isLocal()) {
+        if (world.isLocal) {
             world.newExplosion(this, posX, posY, posZ, 1f, false, false)
             setDead()
         }

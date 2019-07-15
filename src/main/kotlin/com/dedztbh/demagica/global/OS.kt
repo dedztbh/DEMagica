@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
  * Project DEMagica
  */
 
-open class TickOS : DeOS<TickTaskManager>({ TickTaskManager() }) {
+class TickOS : DeOS<TickTaskManager>(::TickTaskManager) {
     fun tick() = processMap.forEach { (key, tickTaskManager) ->
         if (key != null) {
             tickTaskManager.tick()

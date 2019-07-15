@@ -21,7 +21,7 @@ class MagicBomb : MagicBall {
 
     override fun onHit(raytraceResultIn: RayTraceResult) {
         super.onHit(raytraceResultIn)
-        if (world.isLocal()) {
+        if (world.isLocal) {
             world.newExplosion(this, posX, posY, posZ, 6f, true, true)
             setDead()
         }

@@ -14,7 +14,8 @@ import kotlin.random.Random
 
 typealias P<T, R> = Pair<T, R>
 
-fun World.isLocal() = !isRemote
+val World.isLocal: Boolean
+    get() = !isRemote
 
 fun Random.nextVec3d(maxSpread: Double): Vec3d =
         if (maxSpread > 0.0) {
@@ -49,3 +50,5 @@ fun Boolean.toInt(): Int = if (this) 1 else 0
 fun Int.toBool(): Boolean = this != 0
 
 infix fun <T : Comparable<T>> T.orIfSmaller(b: T) = if (compareTo(b) > 0) b else this
+
+fun <T> nil(): T? = null

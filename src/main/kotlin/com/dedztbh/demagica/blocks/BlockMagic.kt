@@ -2,8 +2,9 @@ package com.dedztbh.demagica.blocks
 
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.blocks.tileEntities.BlockMagicTileEntity
+import com.dedztbh.demagica.global.DEMagicaBlock
 import com.dedztbh.demagica.global.ModGuiHandler
-import com.dedztbh.demagica.global.ModItems.Companion.tabTutorialMod
+import com.dedztbh.demagica.global.ModItems.tabDEMagica
 import com.dedztbh.demagica.util.isLocal
 import net.minecraft.block.Block
 import net.minecraft.block.ITileEntityProvider
@@ -30,11 +31,11 @@ import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
 
-class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
+class BlockMagic : Block(Material.ROCK), ITileEntityProvider, DEMagicaBlock {
     init {
         unlocalizedName = "${DEMagica.MODID}.magicblock"
         setRegistryName("magicblock")
-        setCreativeTab(tabTutorialMod)
+        setCreativeTab(tabDEMagica)
         defaultState = blockState.baseState.withProperty(FACING, EnumFacing.NORTH)
     }
 
@@ -107,7 +108,7 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
                                   hitX: Float,
                                   hitY: Float,
                                   hitZ: Float): Boolean {
-        if (worldIn.isLocal()) {
+        if (worldIn.isLocal) {
             playerIn.apply {
                 if (isSneaking) {
                     if (side == state.getValue(FACING)) {
@@ -127,12 +128,16 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
     }
 
     @SideOnly(Side.CLIENT)
-    fun initModel() {
+    override fun initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, ModelResourceLocation(registryName!!, "inventory"))
     }
 
     // TODO: Change according to TE lastConvertRate.
     override fun getLightValue(state: IBlockState, world: IBlockAccess, pos: BlockPos): Int {
         return if (state.getValue(CONVERTING)) 15 else 0
+    }
+
+    override fun getTEClass(): Class<out TileEntity> {
+        return BlockMagicTileEntity::class.java
     }
 }

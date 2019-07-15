@@ -178,7 +178,7 @@ class BlockMagicTileEntity :
     }
 
     override fun update() {
-        if (world.isLocal()) {
+        if (world.isLocal) {
             taskManager.tick()
             if (!inputRateUpdated) {
                 lastInputRate = 0
