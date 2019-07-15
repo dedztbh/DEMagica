@@ -33,7 +33,8 @@ class ClientProxy : CommonProxy() {
 
         @JvmStatic
         var keyBindings = arrayOf(
-                KeyBinding("key.zoom.desc", Keyboard.KEY_Z, "key.magicbeans.category")
+                KeyBinding("key.zoom.desc", Keyboard.KEY_B, "key.demagica.category"),
+                KeyBinding("key.fly.desc", Keyboard.KEY_Z, "key.demagica.category")
         )
     }
 }

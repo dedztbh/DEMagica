@@ -6,7 +6,8 @@ import java.util.*
  * Created by DEDZTBH on 19-7-13.
  * Project DEMagica
  */
-open class DeOS<T>(private val constructObject: () -> T) {
+@Open
+class DeOS<T>(private val constructObject: () -> T) {
     constructor(clazz: Class<T>) : this({ clazz.newInstance() })
 
     val processMap = WeakHashMap<Any, T>()

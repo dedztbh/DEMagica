@@ -56,13 +56,13 @@ open class CommonProxy {
         Config.readConfig()
 
         //Register projectiles
-        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicball"), MagicBall::class.java, "MagicBall", 10, DEMagica.instance, 512, 2, true)
+        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicball"), MagicBall::class.java, "MagicBall", 10, DEMagica.instance, 512, 1, true)
         RenderingRegistry.registerEntityRenderingHandler(MagicBall::class.java, MagicBallRenderFactory())
-        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicbomb"), MagicBomb::class.java, "MagicBomb", 11, DEMagica.instance, 512, 2, true)
+        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicbomb"), MagicBomb::class.java, "MagicBomb", 11, DEMagica.instance, 512, 1, true)
         RenderingRegistry.registerEntityRenderingHandler(MagicBomb::class.java, MagicBallRenderFactory())
-        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicballheavy"), MagicBallHeavy::class.java, "MagicBallHeavy", 12, DEMagica.instance, 512, 2, true)
+        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicballheavy"), MagicBallHeavy::class.java, "MagicBallHeavy", 12, DEMagica.instance, 512, 1, true)
         RenderingRegistry.registerEntityRenderingHandler(MagicBallHeavy::class.java, MagicBallRenderFactory())
-        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicballkatyusha"), MagicBallKatyusha::class.java, "MagicBallKatyusha", 13, DEMagica.instance, 512, 2, true)
+        EntityRegistry.registerModEntity(ResourceLocation("demagica:magicballkatyusha"), MagicBallKatyusha::class.java, "MagicBallKatyusha", 13, DEMagica.instance, 512, 1, true)
         RenderingRegistry.registerEntityRenderingHandler(MagicBallKatyusha::class.java, MagicBallRenderFactory())
     }
 

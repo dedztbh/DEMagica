@@ -47,6 +47,9 @@ class ItemMagicGun : ItemBow() {
     private val taskManager: TickTaskManager = ServerTickOS.create(this)
     private val taskManagerClient: TickTaskManager = ClientTickOS.create(this)
     private val stackShooterOS = DeOS { this.StackShooter() }
+    fun DeOS<StackShooter>.terminate(itemStack: ItemStack) {
+        get(itemStack)?.runningCoroutineTerminationFlag = true
+    }
 
     init {
         setRegistryName("magicgun")
@@ -62,64 +65,68 @@ class ItemMagicGun : ItemBow() {
         var firingTask: TickTaskManager.Task? = null
         var runningCoroutine: Job? = null
 
-        fun asyncShootMagicBall(stack: ItemStack, stackShooter: StackShooter, worldIn: World, playerIn: EntityPlayer, handIn: EnumHand, doShoot: Boolean = true): Job {
-            return GlobalScope.launch {
-
-                // Check if item is switched
-                (stack.item !is ItemMagicGun) then {
-                    runningCoroutineTerminationFlag = true
-                }
-
-                stackShooter.run {
-                    if (runningCoroutineTerminationFlag) {
-                        runningCoroutine = null
-                        return@launch
+        fun asyncShootMagicBall(stack: ItemStack,
+                                stackShooter: StackShooter,
+                                worldIn: World,
+                                playerIn: EntityPlayer,
+                                handIn: EnumHand,
+                                doShoot: Boolean = true): Job =
+                GlobalScope.launch {
+                    // Check if item is switched
+                    (playerIn.getHeldItem(handIn) !== stack) then {
+                        runningCoroutineTerminationFlag = true
                     }
-                    if (doShoot) {
-                        val magicGunMode = MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))
-                        taskManagerClient.runTask {
-                            playerIn.activeHand = handIn
+
+                    stackShooter.run {
+                        if (runningCoroutineTerminationFlag) {
+                            runningCoroutine = null
+                            return@launch
                         }
-                        firingTask = taskManager.runTask {
-                            playerIn.activeHand = handIn
-                            worldIn.apply {
-                                when (magicGunMode) {
-                                    MagicGunMode.LIGHT -> {
-                                        spawnEntity(
-                                                MagicBall(this, playerIn).apply {
-                                                    shoot(playerIn, 5f, 1f)
-                                                })
-                                    }
-                                    MagicGunMode.HEAVY -> {
-                                        spawnEntity(
-                                                MagicBallHeavy(this, playerIn).apply {
-                                                    shoot(playerIn, 5f, 1f)
-                                                })
-                                    }
-                                    MagicGunMode.KATYUSHA -> {
-                                        spawnEntity(
-                                                MagicBallKatyusha(this, playerIn).apply {
-                                                    shoot(playerIn, 4f, 10f)
-                                                })
-                                    }
-                                    MagicGunMode.MORTAR -> {
-                                        spawnEntity(
-                                                MagicBomb(this, playerIn).apply {
-                                                    shoot(playerIn, 3.5f, 2f)
-                                                })
+                        if (doShoot) {
+                            val magicGunMode =
+                                    MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))
+                            taskManagerClient.runTask {
+                                playerIn.activeHand = handIn
+                            }
+                            firingTask = taskManager.runTask {
+                                playerIn.activeHand = handIn
+                                worldIn.apply {
+                                    when (magicGunMode) {
+                                        MagicGunMode.LIGHT -> {
+                                            spawnEntity(
+                                                    MagicBall(this, playerIn).apply {
+                                                        shoot(playerIn, 5f, 1f)
+                                                    })
+                                        }
+                                        MagicGunMode.HEAVY -> {
+                                            spawnEntity(
+                                                    MagicBallHeavy(this, playerIn).apply {
+                                                        shoot(playerIn, 5f, 1f)
+                                                    })
+                                        }
+                                        MagicGunMode.KATYUSHA -> {
+                                            spawnEntity(
+                                                    MagicBallKatyusha(this, playerIn).apply {
+                                                        shoot(playerIn, 4f, 10f)
+                                                    })
+                                        }
+                                        MagicGunMode.MORTAR -> {
+                                            spawnEntity(
+                                                    MagicBomb(this, playerIn).apply {
+                                                        shoot(playerIn, 3.5f, 2f)
+                                                    })
+                                        }
                                     }
                                 }
                             }
+                            delay(magicGunMode.delayMs)
                         }
-                        delay(magicGunMode.delayMs)
+                        if (firingTask?.isTerminated == true) {
+                            firingTask = null
+                        }
+                        runningCoroutine = asyncShootMagicBall(stack, this, worldIn, playerIn, handIn, firingTask == null)
                     }
-                    if (firingTask?.isTerminated == true) {
-                        firingTask = null
-                    }
-                    runningCoroutine = asyncShootMagicBall(stack, this, worldIn, playerIn, handIn, firingTask == null)
                 }
-            }
-        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -153,10 +160,10 @@ class ItemMagicGun : ItemBow() {
 
     override fun onPlayerStoppedUsing(stack: ItemStack, worldIn: World, entityLiving: EntityLivingBase, timeLeft: Int) {
         worldIn.isLocal() then {
-            stackShooterOS.getOrCreate(stack).runningCoroutineTerminationFlag = true
+            stackShooterOS.terminate(stack)
             entityLiving.heldItemOffhand.apply {
                 (item is ItemMagicGun) then {
-                    stackShooterOS.getOrCreate(this).runningCoroutineTerminationFlag = true
+                    stackShooterOS.terminate(stack)
                 }
             }
         }
@@ -164,20 +171,23 @@ class ItemMagicGun : ItemBow() {
 
     override fun onEntitySwing(entityLiving: EntityLivingBase, stack: ItemStack): Boolean {
         entityLiving.world.isLocal() then {
-            stackShooterOS.get(stack)?.run {
-                val newMagicGunMode = when (MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))) {
-                    MagicGunMode.LIGHT -> MagicGunMode.HEAVY
-                    MagicGunMode.HEAVY -> MagicGunMode.KATYUSHA
-                    MagicGunMode.KATYUSHA -> MagicGunMode.MORTAR
-                    MagicGunMode.MORTAR -> MagicGunMode.LIGHT
-                }
-                stack.tagCompound?.setString(MAGIC_GUN_MODE, newMagicGunMode.name)
-                (entityLiving as? EntityPlayer)?.sendStatusMessage(
-                        TextComponentString("Magic Gun Mode: $newMagicGunMode").apply {
-                            style.color = TextFormatting.GREEN
-                        }, false)
+            val newMagicGunMode = when (MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))) {
+                MagicGunMode.LIGHT -> MagicGunMode.HEAVY
+                MagicGunMode.HEAVY -> MagicGunMode.KATYUSHA
+                MagicGunMode.KATYUSHA -> MagicGunMode.MORTAR
+                MagicGunMode.MORTAR -> MagicGunMode.LIGHT
             }
+            stack.tagCompound?.setString(MAGIC_GUN_MODE, newMagicGunMode.name)
+            (entityLiving as? EntityPlayer)?.sendStatusMessage(
+                    TextComponentString("Magic Gun Mode: $newMagicGunMode").apply {
+                        style.color = TextFormatting.GREEN
+                    }, false)
         }
         return false
+    }
+
+    override fun onDroppedByPlayer(item: ItemStack, player: EntityPlayer): Boolean {
+        stackShooterOS.terminate(item)
+        return true
     }
 }
