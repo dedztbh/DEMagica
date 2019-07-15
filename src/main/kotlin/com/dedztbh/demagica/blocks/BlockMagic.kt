@@ -131,6 +131,7 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, ModelResourceLocation(registryName!!, "inventory"))
     }
 
+    // TODO: Change according to TE lastConvertRate.
     override fun getLightValue(state: IBlockState, world: IBlockAccess, pos: BlockPos): Int {
         return if (state.getValue(CONVERTING)) 15 else 0
     }

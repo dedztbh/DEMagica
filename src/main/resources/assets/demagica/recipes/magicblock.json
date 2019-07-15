@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PGP",
+    "IFI",
+    "PSP"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "G": {
+      "item": "minecraft:gold_block"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "S": {
+      "item": "minecraft:stained_glass",
+      "data": 10
+    }
+  },
+  "result": {
+    "item": "demagica:magicblock"
+  }
+}

@@ -30,7 +30,7 @@ import net.minecraftforge.items.CapabilityItemHandler
 import net.minecraftforge.items.IItemHandlerModifiable
 import net.minecraftforge.items.ItemStackHandler
 
-const val BATTERY_RF_CAPACITY = 16000
+const val BATTERY_RF_CAPACITY = 64000
 const val TANK_MB_CAPACITY = 16000
 const val MB_CONSUMED = 50
 const val RF_GENERATED = 50
@@ -141,14 +141,13 @@ class BlockMagicTileEntity :
 
     private val taskManager = TickTaskManager().apply {
         runTask(CONVERT_TICKS.toLong(), repeat = true, startNow = true, isEvery = true) {
-            lastConvertRate = if (steamTank.drain(MB_CONSUMED, false)?.amount == MB_CONSUMED
+            if (steamTank.drain(MB_CONSUMED, false)?.amount == MB_CONSUMED
                     && battery.receiveEnergy(RF_GENERATED, true) == RF_GENERATED) {
                 //have enough steam and tank has enough space, can convert
                 steamTank.drain(MB_CONSUMED, true)
                 battery.receiveEnergy(RF_GENERATED, false)
                 dirtyFlag = true
                 RF_GENERATED.toDouble() / CONVERT_TICKS
-
             } else {
                 0.0
             }.also {
@@ -156,6 +155,7 @@ class BlockMagicTileEntity :
                     BlockMagic.setState(it > 0.0, world, pos)
                     dirtyFlag = true
                 }
+                lastConvertRate = it
             }
         }
 
@@ -222,7 +222,7 @@ class BlockMagicTileEntity :
         readFromNBT(pkt.nbtCompound)
     }
 
-    override fun shouldRefresh(world: World, pos: BlockPos, oldState: IBlockState, newSate: IBlockState): Boolean {
-        return oldState.block !is BlockMagic || newSate.block !is BlockMagic
+    override fun shouldRefresh(world: World, pos: BlockPos, oldState: IBlockState, newState: IBlockState): Boolean {
+        return oldState.block !is BlockMagic || newState.block !is BlockMagic
     }
 }

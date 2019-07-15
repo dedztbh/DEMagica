@@ -47,3 +47,5 @@ infix fun <T> Boolean.then(block: () -> T): T? = if (this) block() else null
 
 fun Boolean.toInt(): Int = if (this) 1 else 0
 fun Int.toBool(): Boolean = this != 0
+
+infix fun <T: Comparable<T>> T.orIfSmaller(b: T) = if (compareTo(b) > 0) b else this
