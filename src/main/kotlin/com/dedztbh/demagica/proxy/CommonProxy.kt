@@ -38,7 +38,7 @@ open class CommonProxy {
                 event.registry.register(it)
                 it.hasTileEntity(it.defaultState) then {
                     it as DEMagicaBlock
-                    GameRegistry.registerTileEntity(it.getTEClass(), ResourceLocation("${DEMagica.MODID}:${it.registryName}"))
+                    GameRegistry.registerTileEntity(it.getTEClass(), it.registryName)
                 }
             }
         }
