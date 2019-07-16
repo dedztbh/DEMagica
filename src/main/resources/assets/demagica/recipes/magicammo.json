@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "demagica:magicblock"
+    }
+  ],
+  "result": {
+    "item": "demagica:magicammo",
+    "count": 64
+  }
+}

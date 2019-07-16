@@ -1,16 +1,18 @@
 [
-{
-  "modid": "demagica",
-  "name": "DEMagica",
-  "description": "We proudly present our next-gen DEMagic™ series!",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "https://github.com/DEDZTBH/DEMagica",
-  "updateUrl": "",
-  "authorList": ["DEDZTBH"],
-  "credits": "",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
-}
+  {
+    "modid": "demagica",
+    "name": "DEMagica",
+    "description": "We proudly present our next-gen DEMagic™ series!",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://github.com/DEDZTBH/DEMagica",
+    "updateUrl": "",
+    "authorList": [
+      "DEDZTBH"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
 ]

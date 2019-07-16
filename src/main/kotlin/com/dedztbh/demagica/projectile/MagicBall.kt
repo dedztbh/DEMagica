@@ -2,6 +2,7 @@ package com.dedztbh.demagica.projectile
 
 import com.dedztbh.demagica.util.Open
 import com.dedztbh.demagica.util.isLocal
+import com.dedztbh.demagica.util.nextPitch
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.EntityArrow
@@ -41,7 +42,7 @@ class MagicBall : EntityArrow, IThrowableEntity {
     }
 
     fun playShootingSound() {
-        world.playSound(thrower as EntityPlayer?, posX, posY, posZ, sound, SoundCategory.PLAYERS, 16f, Random.nextFloat())
+        world.playSound(thrower as EntityPlayer?, posX, posY, posZ, sound, SoundCategory.PLAYERS, 16f, Random.nextPitch())
     }
 
     fun shoot(shooter: Entity, velocity: Float = 5f, inaccuracy: Float = 1f) {

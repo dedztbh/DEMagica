@@ -38,7 +38,6 @@ const val MAGIC_GUN_MODE = "MagicGunMode"
 
 class ItemMagicGun : ItemBow(), DEMagicaStuff {
 
-
     enum class MagicGunMode(val delayMs: Long, val ammo: Int) {
         LIGHT(0L, 1),
         HEAVY(100L, 2),

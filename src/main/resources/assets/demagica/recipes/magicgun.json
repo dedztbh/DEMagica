@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MI ",
+    " MI",
+    " GM"
+  ],
+  "key": {
+    "M": {
+      "item": "demagica:magicblock"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "G": {
+      "item": "minecraft:gold_block"
+    }
+  },
+  "result": {
+    "item": "demagica:magicgun"
+  }
+}

@@ -1,17 +1,20 @@
 package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
+import com.dedztbh.demagica.blocks.BlockMagic
 import com.dedztbh.demagica.global.DEMagicaStuff
 import com.dedztbh.demagica.global.ModItems
 import com.dedztbh.demagica.global.ServerTickOS
 import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
+import com.dedztbh.demagica.util.nextPitch
 import net.minecraft.client.renderer.block.model.ModelResourceLocation
-import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.SoundEvents
-import net.minecraft.item.Item
+import net.minecraft.item.ItemBlock
 import net.minecraft.item.ItemStack
+import net.minecraft.item.ItemSword
 import net.minecraft.util.EnumActionResult
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.EnumHand
@@ -25,10 +28,10 @@ import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+import kotlin.random.Random
 
 
-class ItemMagicStick : Item(), DEMagicaStuff {
-
+class ItemMagicStick : ItemSword(ToolMaterial.GOLD), DEMagicaStuff {
     private val taskManager: TickTaskManager
 
     init {
@@ -38,6 +41,8 @@ class ItemMagicStick : Item(), DEMagicaStuff {
         creativeTab = ModItems.tabDEMagica
 
         taskManager = ServerTickOS.create(this)
+
+        maxDamage = 64
     }
 
     @SideOnly(Side.CLIENT)
@@ -46,7 +51,7 @@ class ItemMagicStick : Item(), DEMagicaStuff {
     }
 
     override fun onItemUse(player: EntityPlayer, worldIn: World, pos: BlockPos, hand: EnumHand, facing: EnumFacing, hitX: Float, hitY: Float, hitZ: Float): EnumActionResult {
-        if (worldIn.isLocal) {
+        if (worldIn.isLocal && player.isCreative) {
             val entity = worldIn.getTileEntity(pos)
             CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.let { fluidCapability ->
                 entity?.hasCapability(fluidCapability, null)?.let {
@@ -67,22 +72,29 @@ class ItemMagicStick : Item(), DEMagicaStuff {
         return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ)
     }
 
-    override fun onLeftClickEntity(stack: ItemStack, player: EntityPlayer, entity: Entity): Boolean {
-        if (entity.world.isLocal) {
-            player.lookVec.apply {
-                val pow = 20
-                entity.addVelocity(x * pow, y * pow, z * pow)
-            }
+    //TODO: Cooldown maybe?
+    override fun hitEntity(stack: ItemStack, target: EntityLivingBase, attacker: EntityLivingBase): Boolean {
+        attacker.apply {
+            if (world.isLocal) {
+                lookVec.apply {
+                    val pow = 20
+                    target.addVelocity(x * pow, y * pow, z * pow)
+                }
 
-            taskManager.runTask(20, false) {
-                entity.apply {
-                    world.createExplosion(player, posX, posY, posZ, 5f, true)
-                    world.playSound(player, posX, posY, posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 10f, 0.5f)
+                taskManager.runTask(20, false) {
+                    target.apply {
+                        world.createExplosion(attacker, posX, posY, posZ, 5f, true)
+                        world.playSound(attacker as? EntityPlayer, posX, posY, posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 10f, Random.nextPitch())
+                    }
                 }
             }
         }
-
-        return false
+        return super.hitEntity(stack, target, attacker)
     }
 
+    override fun getIsRepairable(toRepair: ItemStack, repair: ItemStack): Boolean {
+        return repair.run {
+            count > 0 && (item as? ItemBlock)?.block is BlockMagic
+        }
+    }
 }

@@ -16,7 +16,6 @@ class ItemMagicAmmo : Item(), DEMagicaStuff {
         unlocalizedName = "${DEMagica.MODID}.magicammo"
 
         creativeTab = ModItems.tabDEMagica
-        setMaxStackSize(1024)
     }
 
     @SideOnly(Side.CLIENT)
