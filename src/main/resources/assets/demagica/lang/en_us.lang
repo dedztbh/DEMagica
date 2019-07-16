@@ -1,6 +1,7 @@
 # items
 item.demagica.magicgun.name=DEMagic™ Objective Individual Combat Weapon
 item.demagica.magicstick.name=DEMagic™ Pressurized Steam Injection Stick
+item.demagica.magicammo.name=DEMagic™ OICW Omni Energy Projectile
 
 # blocks
 tile.demagica.magicblock.name=DEMagic™ Gaseous Hydrogen Monoxide Heavy Fusion Reactor

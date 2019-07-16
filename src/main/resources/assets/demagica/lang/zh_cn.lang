@@ -1,6 +1,7 @@
 # items
 item.demagica.magicgun.name=DEMagic™ 目标个人战斗武器
 item.demagica.magicstick.name=DEMagic™ 加压蒸汽注入棒
+item.demagica.magicammo.name=DEMagic™ OICW万能能量投射物
 
 # blocks
 tile.demagica.magicblock.name=DEMagic™ 气态氧化氢重聚变反应堆
