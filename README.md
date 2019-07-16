@@ -1,7 +1,9 @@
 #DEMagica
+
 We proudly present our next-gen DEMagic™ series!
 
-#####Now includes:
+###Now includes:
+
 Blocks:
 - DEMagic™ Gaseous Hydrogen Monoxide Heavy Fusion Reactor (Machine that turns steam in RF)
 
