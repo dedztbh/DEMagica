@@ -1,4 +1,5 @@
 # DEMagica
+[![Build Status](https://travis-ci.org/DEDZTBH/DEMagica.svg?branch=master)](https://travis-ci.org/DEDZTBH/DEMagica)
 
 We proudly present our next-gen DEMagic™ series!
 
