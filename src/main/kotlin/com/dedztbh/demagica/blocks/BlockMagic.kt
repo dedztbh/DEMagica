@@ -2,12 +2,13 @@ package com.dedztbh.demagica.blocks
 
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.blocks.tileEntities.BlockMagicTileEntity
-import com.dedztbh.demagica.global.DEMagicaBlock
+import com.dedztbh.demagica.global.IDEMagicaBlock
 import com.dedztbh.demagica.global.ModGuiHandler
 import com.dedztbh.demagica.global.ModItems.tabDEMagica
 import com.dedztbh.demagica.util.isLocal
 import net.minecraft.block.Block
 import net.minecraft.block.ITileEntityProvider
+import net.minecraft.block.SoundType
 import net.minecraft.block.material.Material
 import net.minecraft.block.properties.PropertyBool
 import net.minecraft.block.properties.PropertyDirection
@@ -31,12 +32,16 @@ import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
 
-class BlockMagic : Block(Material.ROCK), ITileEntityProvider, DEMagicaBlock {
+class BlockMagic : Block(Material.ROCK), ITileEntityProvider, IDEMagicaBlock {
     init {
         unlocalizedName = "${DEMagica.MODID}.magicblock"
         setRegistryName("magicblock")
         setCreativeTab(tabDEMagica)
         defaultState = blockState.baseState.withProperty(FACING, EnumFacing.NORTH)
+
+        setResistance(10f)
+        setHardness(5f)
+        soundType = SoundType.ANVIL
     }
 
     override fun hasTileEntity(state: IBlockState): Boolean {

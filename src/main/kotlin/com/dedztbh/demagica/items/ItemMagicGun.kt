@@ -2,7 +2,7 @@ package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.global.ClientTickOS
-import com.dedztbh.demagica.global.DEMagicaStuff
+import com.dedztbh.demagica.global.IDEMagicaItem
 import com.dedztbh.demagica.global.ModItems.tabDEMagica
 import com.dedztbh.demagica.global.ServerTickOS
 import com.dedztbh.demagica.projectile.MagicBall
@@ -36,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
 
 const val MAGIC_GUN_MODE = "MagicGunMode"
 
-class ItemMagicGun : ItemBow(), DEMagicaStuff {
+class ItemMagicGun : ItemBow(), IDEMagicaItem {
 
     enum class MagicGunMode(val delayMs: Long, val ammo: Int) {
         LIGHT(0L, 1),

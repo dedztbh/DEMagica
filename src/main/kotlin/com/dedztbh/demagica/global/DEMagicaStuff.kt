@@ -10,23 +10,24 @@ import net.minecraftforge.fml.relauncher.SideOnly
  * Project DEMagica
  */
 
-interface DEMagicaStuff {
+interface IDEMagicaStuff {
     @SideOnly(Side.CLIENT)
     fun initModel()
 }
 
-interface DEMagicaBlock : DEMagicaStuff {
+interface IDEMagicaBlock : IDEMagicaStuff {
     fun getTEClass(): Class<out TileEntity>
 }
 
+typealias IDEMagicaItem = IDEMagicaStuff
+
 @Open
 class DEMagicaModStuff {
-
     @Suppress("UNCHECKED_CAST")
     fun <T> stuffOf(clazz: Class<T>, vararg otherClazz: Class<out Any>, newInstance: Boolean = false): List<T> =
-            this::class.java.declaredMethods.filter { getter ->
+            this::class.java.declaredMethods.filter { func ->
                 setOf(clazz, *otherClazz).all {
-                    it.isAssignableFrom(getter.returnType)
+                    it.isAssignableFrom(func.returnType)
                 }
             }.map {
                 (if (newInstance)
@@ -37,7 +38,7 @@ class DEMagicaModStuff {
 
     @SideOnly(Side.CLIENT)
     fun initModels() {
-        this.stuffOf(DEMagicaStuff::class.java).forEach {
+        this.stuffOf(IDEMagicaStuff::class.java).forEach {
             it.initModel()
         }
     }

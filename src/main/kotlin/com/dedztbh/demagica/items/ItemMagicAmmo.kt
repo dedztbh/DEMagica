@@ -1,7 +1,7 @@
 package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
-import com.dedztbh.demagica.global.DEMagicaStuff
+import com.dedztbh.demagica.global.IDEMagicaItem
 import com.dedztbh.demagica.global.ModItems
 import net.minecraft.client.renderer.block.model.ModelResourceLocation
 import net.minecraft.item.Item
@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
 
-class ItemMagicAmmo : Item(), DEMagicaStuff {
+class ItemMagicAmmo : Item(), IDEMagicaItem {
     init {
         setRegistryName("magicammo")
         unlocalizedName = "${DEMagica.MODID}.magicammo"

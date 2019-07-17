@@ -2,7 +2,7 @@ package com.dedztbh.demagica.items
 
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.blocks.BlockMagic
-import com.dedztbh.demagica.global.DEMagicaStuff
+import com.dedztbh.demagica.global.IDEMagicaItem
 import com.dedztbh.demagica.global.ModItems
 import com.dedztbh.demagica.global.ServerTickOS
 import com.dedztbh.demagica.util.TickTaskManager
@@ -31,7 +31,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
 import kotlin.random.Random
 
 
-class ItemMagicStick : ItemSword(ToolMaterial.GOLD), DEMagicaStuff {
+class ItemMagicStick : ItemSword(ToolMaterial.GOLD), IDEMagicaItem {
     private val taskManager: TickTaskManager
 
     init {

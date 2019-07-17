@@ -2,7 +2,7 @@ package com.dedztbh.demagica.proxy
 
 import com.dedztbh.demagica.DEMagica
 import com.dedztbh.demagica.global.Config
-import com.dedztbh.demagica.global.DEMagicaBlock
+import com.dedztbh.demagica.global.IDEMagicaBlock
 import com.dedztbh.demagica.global.ModBlocks
 import com.dedztbh.demagica.global.ModItems
 import com.dedztbh.demagica.projectile.*
@@ -34,10 +34,10 @@ open class CommonProxy {
         @JvmStatic
         @SubscribeEvent
         fun registerBlocks(event: RegistryEvent.Register<Block>) {
-            ModBlocks.stuffOf(Block::class.java, DEMagicaBlock::class.java, newInstance = true).forEach {
+            ModBlocks.stuffOf(Block::class.java, IDEMagicaBlock::class.java, newInstance = true).forEach {
                 event.registry.register(it)
                 it.hasTileEntity(it.defaultState) then {
-                    it as DEMagicaBlock
+                    it as IDEMagicaBlock
                     GameRegistry.registerTileEntity(it.getTEClass(), it.registryName)
                 }
             }
