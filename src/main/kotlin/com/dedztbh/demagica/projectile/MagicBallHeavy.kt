@@ -1,6 +1,8 @@
 package com.dedztbh.demagica.projectile
 
+import com.dedztbh.demagica.global.Config
 import com.dedztbh.demagica.util.isLocal
+import com.dedztbh.demagica.util.onlyIfNot
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.math.RayTraceResult
 import net.minecraft.world.World
@@ -11,7 +13,7 @@ import net.minecraft.world.World
  * Project DEMagica
  */
 
-open class MagicBallHeavy : MagicBall {
+class MagicBallHeavy : MagicBall {
 
     constructor(worldIn: World) : super(worldIn)
 
@@ -26,7 +28,7 @@ open class MagicBallHeavy : MagicBall {
     override fun onHit(raytraceResultIn: RayTraceResult) {
         super.onHit(raytraceResultIn)
         if (world.isLocal) {
-            world.newExplosion(this, posX, posY, posZ, 1f, false, false)
+            world.newExplosion(thrower onlyIfNot Config.explosionDoAffectSelf, posX, posY, posZ, 1f, false, false)
             setDead()
         }
     }

@@ -6,6 +6,7 @@ import com.dedztbh.demagica.global.IDEMagicaBlock
 import com.dedztbh.demagica.global.ModBlocks
 import com.dedztbh.demagica.global.ModItems
 import com.dedztbh.demagica.projectile.*
+import com.dedztbh.demagica.util.Open
 import com.dedztbh.demagica.util.then
 import net.minecraft.block.Block
 import net.minecraft.item.Item
@@ -25,7 +26,8 @@ import java.io.File
 
 
 @Mod.EventBusSubscriber
-open class CommonProxy {
+@Open
+class CommonProxy {
     companion object {
         // Config instance
         @JvmStatic
@@ -34,7 +36,7 @@ open class CommonProxy {
         @JvmStatic
         @SubscribeEvent
         fun registerBlocks(event: RegistryEvent.Register<Block>) {
-            ModBlocks.stuffOf(Block::class.java, IDEMagicaBlock::class.java, newInstance = true).forEach {
+            ModBlocks.stuffOf(Block::class, IDEMagicaBlock::class, newInstance = true).forEach {
                 event.registry.register(it)
                 it.hasTileEntity(it.defaultState) then {
                     it as IDEMagicaBlock
@@ -46,17 +48,17 @@ open class CommonProxy {
         @JvmStatic
         @SubscribeEvent
         fun registerItems(event: RegistryEvent.Register<Item>) {
-            ModItems.stuffOf(Item::class.java, newInstance = true).forEach {
+            ModItems.stuffOf(Item::class, newInstance = true).forEach {
                 event.registry.register(it)
             }
 
-            ModBlocks.stuffOf(Block::class.java).forEach {
+            ModBlocks.stuffOf(Block::class).forEach {
                 event.registry.register(ItemBlock(it).setRegistryName(ModBlocks.blockMagic.registryName))
             }
         }
     }
 
-    open fun preInit(e: FMLPreInitializationEvent) {
+    fun preInit(e: FMLPreInitializationEvent) {
         val directory = e.modConfigurationDirectory
         config = Configuration(File(directory.path, "demagica.cfg"))
         Config.readConfig()
@@ -72,9 +74,9 @@ open class CommonProxy {
         RenderingRegistry.registerEntityRenderingHandler(MagicBallKatyusha::class.java, MagicBallRenderFactory())
     }
 
-    open fun init(e: FMLInitializationEvent) {}
+    fun init(e: FMLInitializationEvent) {}
 
-    open fun postInit(e: FMLPostInitializationEvent) {
+    fun postInit(e: FMLPostInitializationEvent) {
         if (config.hasChanged()) {
             config.save()
         }

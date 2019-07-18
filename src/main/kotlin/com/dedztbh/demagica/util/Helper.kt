@@ -52,3 +52,6 @@ fun Int.toBool(): Boolean = this != 0
 infix fun <T : Comparable<T>> T.orIfSmaller(b: T) = if (compareTo(b) > 0) b else this
 
 fun <T> nil(): T? = null
+
+infix fun <T> T.onlyIf(cond: Boolean): T? = if (cond) this else null
+infix fun <T> T.onlyIfNot(cond: Boolean): T? = onlyIf(!cond)

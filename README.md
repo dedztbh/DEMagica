@@ -21,6 +21,10 @@ Useful Keybindings:
 - Z - teleport to y=350 in creative
 - B - binocular
 
+Config:
+- explosionDoAffectSelf: Explosion Do Affect Creator
+
+
 Localizations:
 - 简体中文
 - English

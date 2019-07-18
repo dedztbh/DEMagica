@@ -12,12 +12,12 @@ import net.minecraftforge.fml.common.network.NetworkRegistry
 import org.apache.logging.log4j.Logger
 
 
-@Mod(modid = DEMagica.MODID, name = DEMagica.NAME, version = DEMagica.VERSION)
+@Mod(modid = DEMagica.MODID, name = DEMagica.NAME, version = DEMagica.VERSION, modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter")
 class DEMagica {
     companion object {
         const val MODID = "demagica"
         const val NAME = "DEMagica"
-        const val VERSION = "1.0"
+        const val VERSION = "0.1.1-alpha"
 
         @JvmStatic
         lateinit var logger: Logger
@@ -48,7 +48,7 @@ class DEMagica {
     @Mod.EventHandler
     fun postInit(e: FMLPostInitializationEvent) {
         proxy.postInit(e)
-        logger.debug("Dalao:${Config.dalaofy}")
+        logger.debug("explosionDoAffectSelf:${Config.explosionDoAffectSelf}")
     }
 
 }

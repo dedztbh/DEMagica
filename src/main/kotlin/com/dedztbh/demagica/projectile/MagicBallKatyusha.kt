@@ -1,6 +1,8 @@
 package com.dedztbh.demagica.projectile
 
+import com.dedztbh.demagica.global.Config
 import com.dedztbh.demagica.util.isLocal
+import com.dedztbh.demagica.util.onlyIfNot
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.SoundEvents
 import net.minecraft.util.SoundEvent
@@ -24,7 +26,7 @@ open class MagicBallKatyusha : MagicBall {
 
     override fun onHit(raytraceResultIn: RayTraceResult) {
         if (world.isLocal) {
-            world.newExplosion(this, posX, posY, posZ, 3f, true, true)
+            world.newExplosion(thrower onlyIfNot Config.explosionDoAffectSelf, posX, posY, posZ, 3f, true, true)
             setDead()
         }
     }

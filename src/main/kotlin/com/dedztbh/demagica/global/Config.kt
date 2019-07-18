@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Level
 
 object Config {
     // This values below you can access elsewhere in your mod:
-    var dalaofy = true
+    var explosionDoAffectSelf = false
 
     private val CATEGORY_GENERAL = "general"
     private val CATEGORY_DIMENSIONS = "dimensions"
@@ -31,7 +31,7 @@ object Config {
 
     private fun initGeneralConfig(cfg: Configuration) {
         cfg.addCustomCategoryComment(CATEGORY_GENERAL, "General configuration")
-        dalaofy = cfg.getBoolean("dalaofy", CATEGORY_GENERAL, dalaofy, "To Dalaofy")
+        explosionDoAffectSelf = cfg.getBoolean("explosionDoAffectSelf", CATEGORY_GENERAL, explosionDoAffectSelf, "Explosion Do Affect Creator")
     }
 
     private fun initDimensionConfig(cfg: Configuration) {

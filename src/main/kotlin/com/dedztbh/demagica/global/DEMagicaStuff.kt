@@ -4,6 +4,7 @@ import com.dedztbh.demagica.util.Open
 import net.minecraft.tileentity.TileEntity
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+import kotlin.reflect.KClass
 
 /**
  * Created by DEDZTBH on 2019-07-15.
@@ -25,20 +26,24 @@ typealias IDEMagicaItem = IDEMagicaStuff
 class DEMagicaModStuff {
     @Suppress("UNCHECKED_CAST")
     fun <T> stuffOf(clazz: Class<T>, vararg otherClazz: Class<out Any>, newInstance: Boolean = false): List<T> =
-            this::class.java.declaredMethods.filter { func ->
+            this::class.java.declaredFields.filter { field ->
                 setOf(clazz, *otherClazz).all {
-                    it.isAssignableFrom(func.returnType)
+                    it.isAssignableFrom(field.type)
                 }
             }.map {
                 (if (newInstance)
-                    it.returnType.newInstance()
+                    it.type.newInstance()
                 else
-                    it.invoke(this)) as T
+                    it.get(this)) as T
             }
+
+    fun <T : Any> stuffOf(clazz: KClass<out T>, vararg otherClazz: KClass<out Any>, newInstance: Boolean = false): List<T> =
+            stuffOf(clazz.java, *otherClazz.map { it.java }.toTypedArray(), newInstance = newInstance)
+
 
     @SideOnly(Side.CLIENT)
     fun initModels() {
-        this.stuffOf(IDEMagicaStuff::class.java).forEach {
+        this.stuffOf(IDEMagicaStuff::class).forEach {
             it.initModel()
         }
     }
