@@ -24,7 +24,7 @@ allOpen {
     annotation("com.dedztbh.demagica.util.Open")
 }
 
-version = "0.1.1-alpha"
+version = "0.1.2-alpha"
 group = "com.dedztbh.demagica" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "demagica"
 

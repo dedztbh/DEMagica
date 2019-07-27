@@ -12,10 +12,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
  */
 
 class TickOS : DeOS<TickTaskManager>(::TickTaskManager) {
-    fun tick() = processMap.forEach { (key, tickTaskManager) ->
-        if (key != null) {
-            tickTaskManager.tick()
-        }
+    fun tick() = processMap.forEach { (_, tickTaskManager) ->
+        tickTaskManager.tick()
     }
 }
 

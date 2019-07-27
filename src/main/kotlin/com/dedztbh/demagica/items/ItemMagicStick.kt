@@ -34,15 +34,13 @@ import kotlin.random.Random
 
 
 class ItemMagicStick : ItemSword(ToolMaterial.GOLD), IDEMagicaItem {
-    private val taskManager: TickTaskManager
+    private val taskManager: TickTaskManager = ServerTickOS.create(this)
 
     init {
         setRegistryName("magicstick")
         unlocalizedName = "${DEMagica.MODID}.magicstick"
 
         creativeTab = ModItems.tabDEMagica
-
-        taskManager = ServerTickOS.create(this)
 
         maxDamage = 64
     }

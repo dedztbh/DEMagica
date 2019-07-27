@@ -100,7 +100,7 @@ class BlockMagic : Block(Material.ROCK), ITileEntityProvider, IDEMagicaBlock {
         return BlockStateContainer(this, FACING, CONVERTING)
     }
 
-    fun World.TEAt(pos: BlockPos): BlockMagicTileEntity {
+    private fun World.TEAt(pos: BlockPos): BlockMagicTileEntity {
         return getTileEntity(pos) as BlockMagicTileEntity
     }
 

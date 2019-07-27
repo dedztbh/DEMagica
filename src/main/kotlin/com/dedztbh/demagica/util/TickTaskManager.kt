@@ -17,12 +17,7 @@ class TickTaskManager {
         tasksToBeAdd = mutableListOf()
 
         //Tick Tasks
-        var taskListCorrupted = false
         for (task in tasks) {
-            if (task as Task? == null) {
-                taskListCorrupted = true
-                continue
-            }
             try {
                 task.apply {
                     when (runningState()) {
@@ -50,12 +45,7 @@ class TickTaskManager {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                task.terminate()
             }
-        }
-
-        if (taskListCorrupted) {
-            tasks = tasks.filterNotNull().toMutableList()
         }
 
         //Remove finished Tasks
@@ -71,10 +61,11 @@ class TickTaskManager {
                 startNow: Boolean = false,
                 isEvery: Boolean = false,
                 task: () -> Unit) = Task(
-            ticksLeft = ticks - if (isEvery) 1 else 0,
+            ticksLeft = ticks,
             task = task,
             repeat = repeat,
-            startNow = startNow
+            startNow = startNow,
+            isEvery = isEvery
     ).run()
 
     fun terminateTask(task: Task, onTerminate: (() -> Unit)? = null) = task.terminate(onTerminate)

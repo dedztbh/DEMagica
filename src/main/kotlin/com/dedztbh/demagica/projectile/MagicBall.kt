@@ -4,6 +4,7 @@ import com.dedztbh.demagica.util.Open
 import com.dedztbh.demagica.util.isLocal
 import com.dedztbh.demagica.util.nextPitch
 import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.EntityArrow
 import net.minecraft.init.SoundEvents
@@ -27,7 +28,7 @@ class MagicBall : EntityArrow, IThrowableEntity {
 
     constructor (worldIn: World) : super(worldIn)
 
-    constructor(worldIn: World, player: EntityPlayer) : super(worldIn, player)
+    constructor(worldIn: World, shooter: EntityLivingBase) : super(worldIn, shooter)
 
     init {
         damage = 10.0

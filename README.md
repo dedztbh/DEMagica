@@ -18,7 +18,7 @@ Items:
 - DEMagic™ OICW Omni Energy Projectile (Ammo for OICW)
 
 Useful Keybindings:
-- Z - teleport to y=350 in creative
+- Z - teleport to y=400 in creative
 - B - binocular
 
 Config:
