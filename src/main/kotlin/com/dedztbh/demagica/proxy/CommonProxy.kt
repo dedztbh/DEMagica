@@ -59,7 +59,7 @@ class CommonProxy {
     }
 
     fun preInit(e: FMLPreInitializationEvent) {
-        val directory = e.modConfigurationDirectory
+        val directory: File = e.modConfigurationDirectory
         config = Configuration(File(directory.path, "demagica.cfg"))
         Config.readConfig()
 

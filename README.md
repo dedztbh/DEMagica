@@ -23,6 +23,7 @@ Useful Keybindings:
 
 Config:
 - explosionDoAffectSelf: Explosion Do Affect Creator
+- Machines: machines configuration
 
 
 Localizations:

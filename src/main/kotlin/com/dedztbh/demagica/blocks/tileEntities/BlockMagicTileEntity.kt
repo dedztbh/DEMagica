@@ -4,6 +4,10 @@ import cofh.redstoneflux.api.IEnergyProvider
 import cofh.redstoneflux.api.IEnergyReceiver
 import cofh.redstoneflux.impl.EnergyStorage
 import com.dedztbh.demagica.blocks.BlockMagic
+import com.dedztbh.demagica.global.Config.BATTERY_RF_CAPACITY
+import com.dedztbh.demagica.global.Config.MB_CONSUMED
+import com.dedztbh.demagica.global.Config.RF_GENERATED
+import com.dedztbh.demagica.global.Config.TANK_MB_CAPACITY
 import com.dedztbh.demagica.util.TickTaskManager
 import com.dedztbh.demagica.util.isLocal
 import com.dedztbh.demagica.util.oppositeBlockPosAndEnumFacings
@@ -29,13 +33,6 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties
 import net.minecraftforge.items.CapabilityItemHandler
 import net.minecraftforge.items.IItemHandlerModifiable
 import net.minecraftforge.items.ItemStackHandler
-
-const val BATTERY_RF_CAPACITY = 64000
-const val TANK_MB_CAPACITY = 16000
-const val MB_CONSUMED = 50
-const val RF_GENERATED = 50
-const val CONVERT_TICKS = 1
-const val STORAGE_SIZE = 1
 
 class BlockMagicTileEntity :
         TileEntity(),
@@ -79,7 +76,7 @@ class BlockMagicTileEntity :
         override fun canFillFluidType(fluid: FluidStack): Boolean = fluid.fluid.name == "steam"
     }
     private val battery = EnergyStorage(BATTERY_RF_CAPACITY)
-    private val storage = ItemStackHandler(STORAGE_SIZE)
+    private val storage = ItemStackHandler(1)
 
     //IEnergyProvider
 
@@ -140,14 +137,14 @@ class BlockMagicTileEntity :
     var lastOutputRate = 0
 
     private val taskManager = TickTaskManager().apply {
-        runTask(CONVERT_TICKS.toLong(), repeat = true, startNow = true, isEvery = true) {
+        runTask(1L, repeat = true, startNow = true, isEvery = true) {
             if (steamTank.drain(MB_CONSUMED, false)?.amount == MB_CONSUMED
                     && battery.receiveEnergy(RF_GENERATED, true) == RF_GENERATED) {
                 //have enough steam and tank has enough space, can convert
                 steamTank.drain(MB_CONSUMED, true)
                 battery.receiveEnergy(RF_GENERATED, false)
                 dirtyFlag = true
-                RF_GENERATED.toDouble() / CONVERT_TICKS
+                RF_GENERATED.toDouble()
             } else {
                 0.0
             }.also {

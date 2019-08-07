@@ -17,7 +17,7 @@ class DEMagica {
     companion object {
         const val MODID = "demagica"
         const val NAME = "DEMagica"
-        const val VERSION = "0.1.2-alpha"
+        const val VERSION = "0.1.3-alpha"
 
         @JvmStatic
         lateinit var logger: Logger
