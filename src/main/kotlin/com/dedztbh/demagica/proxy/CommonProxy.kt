@@ -53,7 +53,7 @@ class CommonProxy {
             }
 
             ModBlocks.stuffOf(Block::class).forEach {
-                event.registry.register(ItemBlock(it).setRegistryName(ModBlocks.blockMagic.registryName))
+                event.registry.register(ItemBlock(it).setRegistryName(it.registryName))
             }
         }
     }

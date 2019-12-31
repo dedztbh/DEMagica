@@ -26,15 +26,15 @@ typealias IDEMagicaItem = IDEMagicaStuff
 class DEMagicaModStuff {
     @Suppress("UNCHECKED_CAST")
     fun <T> stuffOf(clazz: Class<T>, vararg otherClazz: Class<out Any>, newInstance: Boolean = false): List<T> =
-            this::class.java.declaredFields.filter { field ->
-                setOf(clazz, *otherClazz).all {
-                    it.isAssignableFrom(field.type)
+            setOf(clazz, *otherClazz).let { allClazz ->
+                this::class.java.declaredFields.filter { field ->
+                    allClazz.all { it.isAssignableFrom(field.type) }
+                }.map {
+                    (if (newInstance)
+                        it.type.newInstance()
+                    else
+                        it.get(this)) as T
                 }
-            }.map {
-                (if (newInstance)
-                    it.type.newInstance()
-                else
-                    it.get(this)) as T
             }
 
     fun <T : Any> stuffOf(clazz: KClass<out T>, vararg otherClazz: KClass<out Any>, newInstance: Boolean = false): List<T> =

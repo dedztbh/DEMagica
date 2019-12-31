@@ -97,15 +97,13 @@ class ItemMagicGun : ItemBow(), IDEMagicaItem {
                                 doShoot: Boolean = true): Job =
                 GlobalScope.launch {
                     // Check if item is switched
-                    (playerIn.getHeldItem(handIn) !== stack) then {
-                        terminate()
-                    }
+                    (playerIn.getHeldItem(handIn) !== stack) then { terminate() }
 
                     this@StackShooter.run {
                         if (terminateFlag) {
                             return@launch
                         }
-                        delay(if (doShoot) {
+                        if (doShoot) {
                             val magicGunMode = MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))
                             taskManagerClient.runTask {
                                 playerIn.activeHand = handIn
@@ -127,7 +125,7 @@ class ItemMagicGun : ItemBow(), IDEMagicaItem {
                             magicGunMode.delayMs
                         } else {
                             STACK_SHOOTER_IDLE_DELAY
-                        })
+                        }.let { delay(it) }
                         runningCoroutine = asyncShootMagicBall(stack, worldIn, playerIn, handIn, firingTask.isTerminated)
                     }
                 }
