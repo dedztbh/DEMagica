@@ -1,20 +1,26 @@
 package com.dedztbh.demagica.util
 
+import com.dedztbh.demagica.DEMagica
+
 /**
  * Created by DEDZTBH on 19-2-13.
  * Project DEMagica
  */
 
 class TickTaskManager {
-    private var tasks = mutableListOf<Task>()
+    private val tasks = HashSet<Task>()
 
     private var tasksToBeAdd = mutableListOf<Task>()
 
     fun tick() {
-        val terminatedTasks = mutableListOf<Task>()
-        tasks.addAll(tasksToBeAdd)
-        // ignoring newly created task into the old list
-        tasksToBeAdd = mutableListOf()
+        tasksToBeAdd.isNotEmpty() then {
+            tasks.addAll(tasksToBeAdd)
+            // ignoring newly created task into the old list
+            tasksToBeAdd = mutableListOf()
+        }
+
+        if (tasks.isEmpty()) return
+        val finishedTasks = mutableListOf<Task>()
 
         //Tick Tasks
         for (task in tasks) {
@@ -23,7 +29,7 @@ class TickTaskManager {
                     when (runningState()) {
                         TaskState.WILL_TERMINATE -> {
                             //Terminate now!
-                            terminatedTasks.add(this)
+                            finishedTasks.add(this)
                         }
                         TaskState.WILL_EXECUTE_LATER -> {
                             //Waiting
@@ -35,11 +41,12 @@ class TickTaskManager {
                             if (repeat) {
                                 ticksLeft = timerTicks
                             } else {
-                                terminatedTasks.add(this)
+                                finishedTasks.add(this)
                             }
                         }
                         else -> {
                             // Should never happen
+                            DEMagica.logger.warn("Terminated task in tasks")
                         }
                     }
                 }
@@ -49,7 +56,7 @@ class TickTaskManager {
         }
 
         //Remove finished Tasks
-        terminatedTasks.forEach {
+        finishedTasks.forEach {
             it.onTerminate()
             it.isTerminated = true
             tasks.remove(it)
@@ -60,13 +67,14 @@ class TickTaskManager {
                 repeat: Boolean = false,
                 startNow: Boolean = false,
                 isEvery: Boolean = false,
-                task: () -> Unit) = Task(
-            ticksLeft = ticks,
-            task = task,
-            repeat = repeat,
-            startNow = startNow,
-            isEvery = isEvery
-    ).run()
+                task: () -> Unit) =
+            Task(
+                    ticksLeft = ticks,
+                    task = task,
+                    repeat = repeat,
+                    startNow = startNow,
+                    isEvery = isEvery
+            ).run()
 
     fun terminateTask(task: Task, onTerminate: (() -> Unit)? = null) = task.terminate(onTerminate)
 
@@ -105,7 +113,7 @@ class TickTaskManager {
                 }
 
         fun run(): Task = apply {
-            this@TickTaskManager.tasksToBeAdd.add(this)
+            tasksToBeAdd.add(this)
         }
 
         fun terminate(onTerminate: (() -> Unit)? = null) {

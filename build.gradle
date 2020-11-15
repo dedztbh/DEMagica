@@ -1,8 +1,6 @@
 buildscript {
     ext {
-        kotlin_version = "1.3.40"
-//    annotations_version = "16.0.3"
-//    coroutines_version = "1.2.1"
+        kotlin_version = "1.3.50"
     }
     repositories {
         jcenter()
@@ -24,7 +22,7 @@ allOpen {
     annotation("com.dedztbh.demagica.util.Open")
 }
 
-version = "0.1.3-alpha"
+version = "0.1.4-alpha"
 group = "com.dedztbh.demagica" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "demagica"
 
@@ -80,8 +78,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    compile group: "net.shadowfacts", name: "Forgelin", version: "1.8.3"
-    deobfCompile "cofh:RedstoneFlux:1.12-2.1.0.6:universal"
+    compile group: "net.shadowfacts", name: "Forgelin", version: "1.8.4"
+    deobfCompile "cofh:RedstoneFlux:1.12-2.1.0.7:universal"
 }
 
 processResources {

@@ -8,8 +8,6 @@ import java.util.*
  */
 @Open
 class DeOS<T>(private val constructObject: () -> T) {
-    constructor(clazz: Class<T>) : this({ clazz.newInstance() })
-
     val processMap = WeakHashMap<Any, T>()
 
     fun create(objRef: Any): T = constructObject().also {
