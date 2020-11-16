@@ -6,7 +6,7 @@ import com.dedztbh.demagica.global.Config
 import com.dedztbh.demagica.global.IDEMagicaItem
 import com.dedztbh.demagica.global.ModItems
 import com.dedztbh.demagica.global.ServerTickOS
-import com.dedztbh.demagica.util.TickTaskManager
+import com.dedztbh.demagica.util.TickGroup
 import com.dedztbh.demagica.util.isLocal
 import com.dedztbh.demagica.util.nextPitch
 import com.dedztbh.demagica.util.onlyIfNot
@@ -34,7 +34,7 @@ import kotlin.random.Random
 
 
 class ItemMagicStick : ItemSword(ToolMaterial.GOLD), IDEMagicaItem {
-    private val taskManager: TickTaskManager = ServerTickOS.create(this)
+    private val group: TickGroup = ServerTickOS.create(this)
 
     init {
         setRegistryName("magicstick")
@@ -81,7 +81,7 @@ class ItemMagicStick : ItemSword(ToolMaterial.GOLD), IDEMagicaItem {
                     target.addVelocity(x * pow, y * pow, z * pow)
                 }
 
-                taskManager.runTask(20, false) {
+                group.runProcess(20, false) {
                     target.apply {
                         world.createExplosion(attacker onlyIfNot Config.explosionDoAffectSelf, posX, posY, posZ, 5f, true)
                         world.playSound(attacker as? EntityPlayer, posX, posY, posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 10f, Random.nextPitch())

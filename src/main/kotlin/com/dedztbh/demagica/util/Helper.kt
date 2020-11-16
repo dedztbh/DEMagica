@@ -43,5 +43,8 @@ fun TileEntity.oppositeBlockPosAndEnumFacings() = pos.run {
 
 inline infix fun <T> Boolean.then(block: () -> T): T? = if (this) block() else null
 
-infix fun <T> T.onlyIf(cond: Boolean): T? = if (cond) this else null
-infix fun <T> T.onlyIfNot(cond: Boolean): T? = onlyIf(!cond)
+@Suppress("NOTHING_TO_INLINE")
+inline infix fun <T> T.onlyIf(cond: Boolean): T? = if (cond) this else null
+
+@Suppress("NOTHING_TO_INLINE")
+inline infix fun <T> T.onlyIfNot(cond: Boolean): T? = onlyIf(!cond)

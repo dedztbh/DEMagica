@@ -1,7 +1,7 @@
 package com.dedztbh.demagica.global
 
 import com.dedztbh.demagica.util.DeOS
-import com.dedztbh.demagica.util.TickTaskManager
+import com.dedztbh.demagica.util.TickGroup
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
@@ -11,8 +11,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
  * Project DEMagica
  */
 
-class TickOS : DeOS<TickTaskManager>(::TickTaskManager) {
-    fun tick() = processMap.forEach { (_, tickTaskManager) ->
+class TickOS : DeOS<TickGroup>(::TickGroup) {
+    fun tick() = groupMap.forEach { (_, tickTaskManager) ->
         tickTaskManager.tick()
     }
 }

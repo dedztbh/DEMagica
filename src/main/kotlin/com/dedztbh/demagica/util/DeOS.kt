@@ -8,14 +8,14 @@ import java.util.*
  */
 @Open
 class DeOS<T>(private val constructObject: () -> T) {
-    val processMap = WeakHashMap<Any, T>()
+    val groupMap = WeakHashMap<Any, T>()
 
     fun create(objRef: Any): T = constructObject().also {
-        processMap[objRef] = it
+        groupMap[objRef] = it
     }
 
     fun get(objRef: Any, createIfNotExist: Boolean = false): T? =
-            processMap[objRef]
+            groupMap[objRef]
                     ?: if (createIfNotExist)
                         create(objRef)
                     else
@@ -24,5 +24,5 @@ class DeOS<T>(private val constructObject: () -> T) {
     fun getOrCreate(objRef: Any): T = get(objRef, true)!!
 
     fun destroy(objRef: Any): T? =
-            processMap.remove(objRef)
+            groupMap.remove(objRef)
 }

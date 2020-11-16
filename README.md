@@ -4,8 +4,8 @@
 We proudly present our next-gen DEMagic™ series!
 
 ##### Dependencies (and recommended versions)
-- Forgelin (1.8.3)
-- Redstone Flux (1.12-2.1.0.6)
+- Forgelin (1.8.4)
+- Redstone Flux (1.12-2.1.0.7)
 
 ### Now includes:
 

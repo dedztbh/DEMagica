@@ -15,7 +15,7 @@ import net.minecraft.world.World
  * Project DEMagica
  */
 
-open class MagicBallKatyusha : MagicBall {
+class MagicBallKatyusha : MagicBall {
 
     constructor(worldIn: World) : super(worldIn)
 

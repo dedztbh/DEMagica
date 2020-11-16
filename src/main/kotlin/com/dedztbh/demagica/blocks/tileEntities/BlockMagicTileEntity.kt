@@ -8,7 +8,7 @@ import com.dedztbh.demagica.global.Config.BATTERY_RF_CAPACITY
 import com.dedztbh.demagica.global.Config.MB_CONSUMED
 import com.dedztbh.demagica.global.Config.RF_GENERATED
 import com.dedztbh.demagica.global.Config.TANK_MB_CAPACITY
-import com.dedztbh.demagica.util.TickTaskManager
+import com.dedztbh.demagica.util.TickGroup
 import com.dedztbh.demagica.util.isLocal
 import com.dedztbh.demagica.util.oppositeBlockPosAndEnumFacings
 import com.dedztbh.demagica.util.then
@@ -136,8 +136,8 @@ class BlockMagicTileEntity :
     var lastConvertRate = 0.0
     var lastOutputRate = 0
 
-    private val taskManager = TickTaskManager().apply {
-        runTask(1L, repeat = true, startNow = true, isEvery = true) {
+    private val taskManager = TickGroup().apply {
+        runProcess(1L, repeat = true, startNow = true, isEvery = true) {
             if (steamTank.drain(MB_CONSUMED, false)?.amount == MB_CONSUMED
                     && battery.receiveEnergy(RF_GENERATED, true) == RF_GENERATED) {
                 //have enough steam and tank has enough space, can convert
@@ -156,7 +156,7 @@ class BlockMagicTileEntity :
             }
         }
 
-        runTask(repeat = true, startNow = true) {
+        runProcess(repeat = true, startNow = true) {
             for ((targetBlockPos, facing) in oppositeBlockPosAndEnumFacings()) {
                 val targetTE = world.getTileEntity(targetBlockPos)
                 if (targetTE is IEnergyReceiver && targetTE.canConnectEnergy(facing)) {

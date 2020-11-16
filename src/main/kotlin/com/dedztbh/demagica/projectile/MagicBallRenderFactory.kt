@@ -29,7 +29,7 @@ class MagicBallRenderFactory<T : Entity> : IRenderFactory<T> {
             model = ModelBall()
         }
 
-        override fun getEntityTexture(entity: T): ResourceLocation? {
+        override fun getEntityTexture(entity: T): ResourceLocation {
             return texture
         }
 
