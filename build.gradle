@@ -4,7 +4,7 @@ buildscript {
     }
     repositories {
         jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        maven { url = "https://files.minecraftforge.net/maven" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
@@ -22,7 +22,7 @@ allOpen {
     annotation("com.dedztbh.demagica.util.Open")
 }
 
-version = "0.1.5-alpha"
+version = "0.1.6-alpha"
 group = "com.dedztbh.demagica" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "demagica"
 

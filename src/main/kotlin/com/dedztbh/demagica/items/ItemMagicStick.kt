@@ -54,10 +54,9 @@ class ItemMagicStick : ItemSword(ToolMaterial.GOLD), IDEMagicaItem {
         if (worldIn.isLocal && player.isCreative) {
             val entity = worldIn.getTileEntity(pos)
             CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.let { fluidCapability ->
-                entity?.hasCapability(fluidCapability, null)?.let {
-                    if (it) {
-                        entity.getCapability(fluidCapability, null)
-                                ?.fill(FluidRegistry.getFluidStack("steam", Int.MAX_VALUE), true)
+                if (entity?.hasCapability(fluidCapability, null) == true) {
+                    FluidRegistry.getFluidStack("steam", Int.MAX_VALUE)?.let { steam ->
+                        entity.getCapability(fluidCapability, null)?.fill(steam, true)
                                 .let {
                                     player.sendStatusMessage(
                                             TextComponentString("Able to fill ${it}mb").apply {

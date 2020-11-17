@@ -1,6 +1,6 @@
 package com.dedztbh.demagica.util
 
-import java.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  * Created by DEDZTBH on 19-2-13.
@@ -8,15 +8,15 @@ import java.util.*
  */
 
 class TickGroup {
-    private val processes = Collections.newSetFromMap(WeakHashMap<Process, Boolean>())
+    private val processes = HashSet<Process>()
 
-    private var processQueue = mutableListOf<Process>()
+    private var processQueue = ConcurrentLinkedQueue<Process>()
 
     fun tick() {
-        processQueue.isNotEmpty() then {
-            processes.addAll(processQueue)
-            // ignoring newly created processes into the old list
-            processQueue = mutableListOf()
+        var item = processQueue.poll()
+        while (item != null) {
+            processes.add(item)
+            item = processQueue.poll()
         }
 
         if (processes.isEmpty()) return
@@ -24,7 +24,6 @@ class TickGroup {
 
         //Tick Tasks
         for (task in processes) {
-            if (task == null) continue
             try {
                 task.apply {
                     when (runningState()) {
@@ -109,7 +108,7 @@ class TickGroup {
                 }
 
         fun exec(): Process = apply {
-            processQueue.add(this)
+            processQueue.offer(this)
         }
 
         fun markTerminate() {

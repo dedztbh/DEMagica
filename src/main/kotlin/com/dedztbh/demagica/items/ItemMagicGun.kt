@@ -93,33 +93,36 @@ class ItemMagicGun : ItemBow(), IDEMagicaItem {
                                 playerIn: EntityPlayer,
                                 handIn: EnumHand): Job =
                 scope.launch {
-                    // Check if item is switched
-                    if (playerIn.getHeldItem(handIn) !== stack) terminate()
-                    this@StackShooter.run {
-                        if (terminateFlag) return@launch
-                        val magicGunMode = MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))
-                        groupClient.runProcess {
-                            playerIn.activeHand = handIn
+                    do {
+                        // Check if item is switched
+                        if (playerIn.getHeldItem(handIn) !== stack) {
+                            terminate()
+                            break
                         }
-                        lock.lock()
-                        group.runProcess(task = {
-                            magicGunMode.run {
-                                val ammoFound = findAmmo(playerIn, magicGunMode.ammo)
-                                (ammoFound.count >= ammo || playerIn.isCreative) then {
-                                    worldIn.apply {
-                                        spawnEntity(magicBallConstructor(this, playerIn).apply {
-                                            shoot(playerIn, velocity, inaccuracy)
-                                        })
-                                    }
-                                    !playerIn.isCreative then { ammoFound.shrink(magicGunMode.ammo) }
-                                }
+                        this@StackShooter.run {
+                            val magicGunMode = MagicGunMode.valueOf(stack.tagCompound!!.getString(MAGIC_GUN_MODE))
+                            groupClient.runProcess {
+                                playerIn.activeHand = handIn
                             }
-                        }, onTerminate = { lock.unlock() })
-                        delay(magicGunMode.delayMs)
-                        lock.withLock {
-                            runningJob = asyncShootMagicBall(stack, worldIn, playerIn, handIn)
+                            lock.lock()
+                            group.runProcess(task = {
+                                magicGunMode.run {
+                                    val ammoFound = findAmmo(playerIn, magicGunMode.ammo)
+                                    (ammoFound.count >= ammo || playerIn.isCreative) then {
+                                        worldIn.apply {
+                                            spawnEntity(magicBallConstructor(this, playerIn).apply {
+                                                shoot(playerIn, velocity, inaccuracy)
+                                            })
+                                        }
+                                        !playerIn.isCreative then { ammoFound.shrink(magicGunMode.ammo) }
+                                    }
+                                }
+                            }, onTerminate = { lock.unlock() })
+                            delay(magicGunMode.delayMs)
+                            lock.withLock {}
                         }
-                    }
+                    } while (!terminateFlag)
+                    reset()
                 }
     }
 
@@ -153,9 +156,9 @@ class ItemMagicGun : ItemBow(), IDEMagicaItem {
     override fun onPlayerStoppedUsing(stack: ItemStack, worldIn: World, entityLiving: EntityLivingBase, timeLeft: Int) {
         worldIn.isLocal then {
             stackShooterOS.terminate(stack)
-            entityLiving.heldItemOffhand.apply {
-                (item is ItemMagicGun) then {
-                    stackShooterOS.terminate(this)
+            entityLiving.heldItemOffhand.let {
+                (it.item is ItemMagicGun) then {
+                    stackShooterOS.terminate(it)
                 }
             }
         }

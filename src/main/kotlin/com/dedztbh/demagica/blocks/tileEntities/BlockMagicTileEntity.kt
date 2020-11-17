@@ -136,8 +136,8 @@ class BlockMagicTileEntity :
     var lastConvertRate = 0.0
     var lastOutputRate = 0
 
-    private val taskManager = TickGroup().apply {
-        runProcess(1L, repeat = true, startNow = true, isEvery = true) {
+    private val taskGroup = TickGroup().apply {
+        runProcess(repeat = true, startNow = true) {
             if (steamTank.drain(MB_CONSUMED, false)?.amount == MB_CONSUMED
                     && battery.receiveEnergy(RF_GENERATED, true) == RF_GENERATED) {
                 //have enough steam and tank has enough space, can convert
@@ -176,11 +176,9 @@ class BlockMagicTileEntity :
 
     override fun update() {
         if (world.isLocal) {
-            taskManager.tick()
-            if (!inputRateUpdated) {
-                lastInputRate = 0
-            }
-            inputRateUpdated = false
+            taskGroup.tick()
+            if (!inputRateUpdated) lastInputRate = 0
+            else inputRateUpdated = false
             if (dirtyFlag) {
                 markDirty()
                 dirtyFlag = false
