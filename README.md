@@ -1,6 +1,8 @@
 # DEMagica
 [![Build Status](https://travis-ci.org/DEDZTBH/DEMagica.svg?branch=master)](https://travis-ci.org/DEDZTBH/DEMagica)
 
+![demo](demo.png)
+
 We proudly present our next-gen DEMagic™ series!
 
 ##### Dependencies (and recommended versions)
